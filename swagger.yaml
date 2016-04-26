@@ -1,0 +1,333 @@
+swagger: "2.0"
+info:
+  version: 1.0.0
+  title: Dreams API
+  description: API para o aplicativo Dreams.
+  termsOfService: http://swagger.io/terms/
+  contact:
+    name: Swagger API Team
+    email: foo@example.com
+    url: http://madskristensen.net
+  license:
+    name: MIT
+    url: http://github.com/gruntjs/grunt/blob/master/LICENSE-MIT
+host: dreams.swagger.io
+basePath: /api
+schemes:
+  - http
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /login:
+    get:
+      description: |
+      operationId: login
+      parameters:
+        - name: username
+          in: query
+          description: username
+          required: false
+          type: string
+          format: string
+        - name: password
+          in: query
+          description: password
+          required: false
+          type: string
+          format: string
+      responses:
+        200:
+          description: login response
+          schema:
+            type: object
+            items:
+              $ref: '#/definitions/User'
+        default:
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+            
+  /forgotPassword:
+    get:
+      description: |
+      operationId: login
+      parameters:
+        - name: email
+          in: query
+          description: email
+          required: false
+          type: string
+          format: string
+      responses:
+        200:
+          description: forgot password response
+          schema:
+            type: object
+        default:
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /users:
+    get:
+      description: |
+      operationId: findUsers
+      parameters:
+        - name: skip
+          in: query
+          description: skip
+          required: false
+          type: integer
+          format: int32
+        - name: limit
+          in: query
+          description: limit
+          required: false
+          type: integer
+          format: int32
+      responses:
+        200:
+          description: users response
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/User'
+        default:
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    post:
+      description: Create a new User
+      operationId: addUser
+      parameters:
+        - name: user
+          in: body
+          description: User to add to the database
+          required: true
+          schema:
+            $ref: '#/definitions/NewUser'
+      responses:
+        200:
+          description: user response
+          schema:
+            $ref: '#/definitions/User'
+        default:
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /users/{id}:
+    get:
+      description: Get an user using the {id}
+      operationId: findUserById
+      parameters:
+        - name: id
+          in: path
+          description: Id of User
+          required: true
+          type: integer
+          format: int64
+      responses:
+        200:
+          description: user response
+          schema:
+            $ref: '#/definitions/User'
+        default:
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    delete:
+      description: Delete User
+      operationId: deleteUserById
+      parameters:
+        - name: id
+          in: path
+          description: Id of User 
+          required: true
+          type: integer
+          format: int64
+      responses:
+        204:
+          description: user deleted
+        default:
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /users/{id}/deviceToken:
+    post:
+      description: Register device
+      operationId: registerDevice
+      parameters:
+        - name: id
+          in: path
+          description: User to add to the database
+          required: true
+          type: string
+          format: string
+        # - name: deviceToken
+        #   in: body
+        #   description: Device Token
+        #   required: false
+        #   type: string
+      responses:
+        200:
+          description: user response
+          
+        default:
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+            
+definitions:
+
+  User:
+    allOf:
+      - required:
+        - id
+      - properties:
+          _id:
+            type: integer
+            format: int64
+          _public:
+            type: integer
+  
+          _followers:
+            type: integer
+          _following:
+            type: integer
+          _to_come_true:
+            type: integer
+          _coming_true:
+            type: integer
+          _came_true:
+            type: integer
+    
+          username:
+            type: string
+          password:
+            type: string
+          email:
+            type: string
+          facebook_id:
+            type: string
+          instagram_id:
+            type: string
+          twitter_id:
+            type: string
+          firstname:
+            type: string
+          lastname:
+            type: string
+          gender:
+            type: string
+          birthday:
+            type: string
+          img_profile:
+            type: string
+          img_background:
+            type: string
+
+  Profile:
+    allOf:
+      - $ref: '#/definitions/User'
+      - properties:
+          config:
+            type: integer
+            
+  Follower:
+    allOf:
+      - properties:
+          _id:
+            type: integer
+            format: int64
+          _public:
+            type: integer
+          _to_come_true:
+            type: integer
+          _coming_true:
+            type: integer
+          _came_true:
+            type: integer
+            
+          _me_too:
+            type: integer
+    
+          username:
+            type: string
+          firstname:
+            type: string
+          lastname:
+            type: string
+          img_profile:
+            type: string
+  
+  Following:
+    allOf:
+      - $ref: '#/definitions/Follower'
+  
+      
+  Dreams:
+    allOf:
+      - properties:
+          _id:
+            type: integer
+            format: int64
+  
+  ComingTrue:
+    allOf:
+      - $ref: '#/definitions/Dreams'
+   
+  CameTrue:
+    allOf:
+      - $ref: '#/definitions/Dreams'
+      
+  ToComeTrue:
+    allOf:
+      - $ref: '#/definitions/Dreams'
+   
+
+  Album:
+    allOf:
+      - properties:
+          _id:
+            type: integer
+            
+      
+  Comments:
+    allOf:
+    - properties:
+        _id:
+          type: integer
+    
+  Likes:
+    allOf:
+    - properties:
+        _id:
+          type: integer
+   
+  Denuncy:
+    allOf:
+    - properties:
+        _id:
+          type: integer
+   
+            
+            
+  NewUser:
+    required:
+      - name
+    properties:
+      name:
+        type: string
+      tag:
+        type: string
+  Error:
+    required:
+      - code
+      - message
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
