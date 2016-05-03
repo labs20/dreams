@@ -272,7 +272,39 @@ definitions:
           _id:
             type: integer
             format: int64
-  
+          _user_id:
+            type: integer
+            format: int64
+          _owner_id:
+            type: integer
+            format: int64
+            
+          _creation_date:
+            type: string
+            format: date
+          
+          _comments:
+            type: integer
+            format: int64
+          _likes:
+            type: integer
+            format: int64
+          _album:
+            type: integer
+            format: int64
+          
+          _dreamers:
+            type: array
+            format: string
+            
+          status:
+            type: integer
+            format: int64
+          description:
+            type: string
+          img_cover:
+            type: string
+            
   ComingTrue:
     allOf:
       - $ref: '#/definitions/Dreams'
@@ -284,26 +316,54 @@ definitions:
   ToComeTrue:
     allOf:
       - $ref: '#/definitions/Dreams'
-   
+            
+  Comments:
+    allOf:
+    - properties:
+        _id:
+          type: integer
+          
+        _creation_date:
+          type: string
+          format: date
+          
+        text:
+          type: string
+          
+  Likes:
+    allOf:
+    - properties:
+        _user_id:
+          type: integer
+      
 
   Album:
     allOf:
       - properties:
           _id:
             type: integer
+          img:
+            type: string
             
-      
-  Comments:
+  AlbumComments:
     allOf:
     - properties:
         _id:
           type: integer
-    
-  Likes:
+          
+        _creation_date:
+          type: string
+          format: date
+          
+        text:
+          type: string
+          
+  AlbumLikes:
     allOf:
     - properties:
-        _id:
+        _user_id:
           type: integer
+   
    
   Denuncy:
     allOf:
