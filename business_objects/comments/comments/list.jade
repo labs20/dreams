@@ -1,0 +1,22 @@
+//
+    Template default para: default.comments.comments
+    Criado em Mon May 09 2016 14:41:17 GMT-0300 (BRT)
+
+table.ui.compact.striped.celled.table
+    thead
+        th Comments
+        th Users
+        th  Active
+        th  Banned
+        th  Creation Date
+        th  Exclusion Date
+        th Comment
+    tbody
+        tr(rv-each-row='data.rows')
+            td {row.comments_key}
+            td {row.users_key}
+            td {row._active}
+            td {row._banned}
+            td {row._creation_date}
+            td {row._exclusion_date}
+            td {row.comment}

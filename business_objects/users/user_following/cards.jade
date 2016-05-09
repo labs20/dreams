@@ -1,0 +1,20 @@
+//
+    Template default para: default.user.user_following
+    Criado em Mon May 09 2016 18:08:05 GMT-0300 (BRT)
+
+.ui.fluid.card(rv-each-row='data.rows')
+    .content
+        .header {row.users_key} - {row.users_key}
+        .meta Keys:  - sem dependências -
+        .description
+
+    .extra.content
+        span.left.floated.button
+            button.ui.orange.icon.mini.button(rv-data-action='api.edit', rv-data-key='row.users_key')
+                i.edit.icon
+                | Editar
+
+        span.right.floated.button
+            button.ui.red.icon.mini.button(rv-data-action='api.delete', rv-data-key='row.users_key')
+                i.delete.icon
+                | Remover

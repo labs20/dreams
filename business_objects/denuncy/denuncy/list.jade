@@ -1,0 +1,20 @@
+//
+    Template default para: default.denuncy.denuncy
+    Criado em Mon May 09 2016 14:41:23 GMT-0300 (BRT)
+
+table.ui.compact.striped.celled.table
+    thead
+        th Denuncy
+        th Users
+        th  Active
+        th  Creation Date
+        th  Exclusion Date
+        th Denuncy
+    tbody
+        tr(rv-each-row='data.rows')
+            td {row.denuncy_key}
+            td {row.users_key}
+            td {row._active}
+            td {row._creation_date}
+            td {row._exclusion_date}
+            td {row.denuncy}

@@ -1,0 +1,14 @@
+//
+    Template default para: default.users.users_like_albuns_rel
+    Criado em Mon May 09 2016 14:40:50 GMT-0300 (BRT)
+
+table.ui.compact.striped.celled.table
+    thead
+        th Users
+        th Albuns
+        th  Creation Date
+    tbody
+        tr(rv-each-row='data.rows')
+            td {row.users_key}
+            td {row.albuns_key}
+            td {row._creation_date}

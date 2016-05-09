@@ -1,0 +1,45 @@
+extends header
+
+block content
+    div.ui
+        #login.ui.fluid.container
+            img#logo_tshark.ui.image.cursor(src='imgs/_logos/tshark.png')
+
+            #login_form.ui.form.ts-center(style='height: 30%; width: 40%;')
+                .ui.card.fluid(style='box-shadow: 0 0 21px -6px black;')
+                    .content
+                        img.ui.right.floated.image(src='imgs/_logos/addmark_horizontal.png', style='opacity: 0.9; margin: 0')
+                        .header Login
+                        .meta Bem vindo ao sistema financeiro AddMark - Retail Pro
+                            | Identifique-se, por favor.
+                        .description
+                            .ui.grid
+                                .ten.wide.column
+                                    .ui.form
+                                        .field
+                                            label Usuário
+                                            .ui.left.icon.input
+                                                input#username(type='text',
+                                                    rv-value='data.row.username',
+                                                    placeholder='Informe o seu usuário',
+                                                    rv-on-keydown='login'
+                                                )
+                                                i.user.icon
+                                        .field
+                                            label Senha
+                                            .ui.left.icon.input
+                                                input#password(type='password',
+                                                    rv-value='data.row.password',
+                                                    placeholder='Informe sua senha',
+                                                    rv-on-keydown='login'
+                                                )
+                                                i.lock.icon
+
+                                .one.wide.column
+                                    .ui.vertical.divider
+                                        i.lock.icon
+
+                                .five.wide.column
+                                    img.ui.image(src='imgs/_logos/retailpro_box.png', style='margin-top: -14px; opacity: 0.9;')
+                    .extra.content
+                        .ui.right.floated.green.button(data-action='sys app security login') Clique para Acessar

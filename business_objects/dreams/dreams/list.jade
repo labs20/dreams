@@ -1,0 +1,36 @@
+//
+    Template default para: default.dreams.dreams
+    Criado em Mon May 09 2016 14:41:08 GMT-0300 (BRT)
+
+table.ui.compact.striped.celled.table
+    thead
+        th Dreams
+        th Users
+        th Owner
+        th  Privacy
+        th  Status
+        th  Active
+        th  Banned
+        th  Creation Date
+        th  Last Changed Date
+        th  Exclusion Date
+        th  Coming True Date
+        th  Came True Date
+        th Description
+        th Img Cover
+    tbody
+        tr(rv-each-row='data.rows')
+            td {row.dreams_key}
+            td {row.users_key}
+            td {row.owner_key}
+            td {row._privacy}
+            td {row._status}
+            td {row._active}
+            td {row._banned}
+            td {row._creation_date}
+            td {row._last_changed_date}
+            td {row._exclusion_date}
+            td {row._coming_true_date}
+            td {row._came_true_date}
+            td {row.description}
+            td {row.img_cover}

@@ -1,0 +1,124 @@
+extends header
+
+block content
+    .ui.content.app
+
+        .ui.padded.container.segment.app-header
+            h1.ui.header
+                img.app-logo-header(src='imgs/_logos/dreams.png')
+                .content
+                    | Dreams App Server
+                    .sub.header
+                        | Central de Controle - Dreams
+
+            .app-menu-trigger.ui.floated.right.secondary.menu
+                a.browse.item
+                    i.sidebar.icon
+                    | Menu
+
+            .app-menu-popup.ui.flowing.popup.bottom.left.transition.hidden
+                .ui.three.column.doubling.stackable.relaxed.equal.height.divided.grid
+                    .column(rv-each-menu='sys.app.menu.data.rows', style="white-space: nowrap;")
+                        h4.ui.header
+                            i(rv-class='menu.icon')
+                            | {menu.label}
+                        .ui.link.list
+                            a.item(
+                                rv-each-submenu='menu.submenu',
+                                rv-data-action='submenu.api',
+                                rv-data-area='submenu.area | if submenu.area menu.area',
+                                rv-data-menu-index='menu._index_'
+                                rv-data-submenu-index='submenu._index_'
+                                rv-on-click='sys.app.menu.click',
+                                style="white-space: nowrap;"
+                            )
+                                i.angle.double.right.icon
+                                | {submenu.label}
+
+
+
+        .ui.padded.container.segment
+            .ui.form
+                h4.ui.dividing.header
+                    i.settings.icon
+                    | Validação de Chamadas de API
+                .field
+                    .fields
+                        .two.wide.field
+                            select.ui.fluid.dropdown(rv-on-change='updateVerb')
+                                option(value='') API...
+                                option(
+                                    rv-each-row='struct.apis'
+                                    rv-value='row._index_'
+                                    rv-text='row.label'
+                                )
+                        .two.wide.field
+                            select.ui.fluid.dropdown#verb
+                                option(value='') Verbo...
+                                option(
+                                    rv-each-row='struct.verb'
+                                    rv-value='row._index_'
+                                    rv-text='row.label'
+                                )
+
+                        .four.wide.field
+                            input#url(type='text', placeholder='/dreams/', rv-value='struct.url')
+
+                        .three.wide.field
+                            input#params(type='text', placeholder='params')
+
+                        .three.wide.field
+                            input#token(type='text', placeholder='token')
+
+                        .two.wide.field
+                            .ui.green.button(rv-on-click='callAPI') Testar
+
+        .ui.padded.container.segment
+            h4.ui.dividing.header
+                i.code.icon
+                | Resultado
+
+            // Listagem
+            #listagem.two.cards.ui(style='height: 300px; overflow: scroll;')
+
+        // Janela central
+        #lists.ui.modal
+            .content
+                .secondary.ui.menu
+
+                    // Título da janela
+                    h3.ui.left.aligned.dividing.fluid.header
+                        i.list.layout.icon
+                        div.content.flowing
+                            span.cursor Listagem Genérica de Dados
+                            .sub.header.cursor
+
+                    // Área de pesquisa e botões
+                    .right.menu
+                        .item
+                            div.ui.icon.input
+                                i.search.icon
+                                input#search(type='text', placeholder='Pesquisar...',
+                                rv-data-action='api.search'
+                                )
+                        .item
+                            button.ui.green.labeled.icon.button(rv-data-action='api.create')
+                                i.add.icon
+                                |   Acrescentar
+
+                // Listagem
+                #listagems.two.cards.ui(style='height: 88%; overflow: scroll;')
+
+
+        #form.ui.modal
+            .header
+                i.big.browser.icon
+                |  Formulário Genérico de Dados
+            div.content
+                .description Edicao
+            div.actions
+                div.ui.green.button.ok(
+                    rv-data-action='api.save',
+                    rv-data-form='api.last_form_id'
+                ) Salvar Alterações
+                div.ui.orange.button.cancel Cancelar

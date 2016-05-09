@@ -1,0 +1,14 @@
+//
+    Template default para: default.users.user_devices
+    Criado em Mon May 09 2016 14:40:50 GMT-0300 (BRT)
+
+table.ui.compact.striped.celled.table
+    thead
+        th User Devices
+        th Users
+        th Token
+    tbody
+        tr(rv-each-row='data.rows')
+            td {row.user_devices_key}
+            td {row.users_key}
+            td {row.token}

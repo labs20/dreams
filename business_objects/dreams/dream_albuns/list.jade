@@ -1,0 +1,16 @@
+//
+    Template default para: default.dreams.dream_albuns
+    Criado em Mon May 09 2016 14:41:08 GMT-0300 (BRT)
+
+table.ui.compact.striped.celled.table
+    thead
+        th Dream Albuns
+        th Dreams
+        th  Active
+        th Img
+    tbody
+        tr(rv-each-row='data.rows')
+            td {row.dream_albuns_key}
+            td {row.dreams_key}
+            td {row._active}
+            td {row.img}

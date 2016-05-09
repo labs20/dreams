@@ -1,0 +1,20 @@
+//
+    Template default para: default.users.user_devices
+    Criado em Mon May 09 2016 14:40:50 GMT-0300 (BRT)
+
+.ui.fluid.card(rv-each-row='data.rows')
+    .content
+        .header {row.user_devices_key} - {row.user_devices_key}
+        .meta Keys: users_key
+        .description
+
+    .extra.content
+        span.left.floated.button
+            button.ui.orange.icon.mini.button(rv-data-action='api.edit', rv-data-key='row.user_devices_key')
+                i.edit.icon
+                | Editar
+
+        span.right.floated.button
+            button.ui.red.icon.mini.button(rv-data-action='api.delete', rv-data-key='row.user_devices_key')
+                i.delete.icon
+                | Remover

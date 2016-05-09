@@ -1,0 +1,46 @@
+//
+    Template default para: default.users.users
+    Criado em Mon May 09 2016 14:40:50 GMT-0300 (BRT)
+
+table.ui.compact.striped.celled.table
+    thead
+        th Users
+        th  Public
+        th  Active
+        th  Banned
+        th  Pending Pwd
+        th  Creation Date
+        th  Deactivation Date
+        th Username
+        th Password
+        th Email
+        th Facebook Id
+        th Instagram Id
+        th Twitter Id
+        th Firstname
+        th Lastname
+        th Gender
+        th Birthday
+        th Img Profile
+        th Img Background
+    tbody
+        tr(rv-each-row='data.rows')
+            td {row.users_key}
+            td {row._public}
+            td {row._active}
+            td {row._banned}
+            td {row._pending_pwd}
+            td {row._creation_date}
+            td {row._deactivation_date}
+            td {row.username}
+            td {row.password}
+            td {row.email}
+            td {row.facebook_id}
+            td {row.instagram_id}
+            td {row.twitter_id}
+            td {row.firstname}
+            td {row.lastname}
+            td {row.gender}
+            td {row.birthday}
+            td {row.img_profile}
+            td {row.img_background}

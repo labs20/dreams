@@ -1,0 +1,20 @@
+//
+    Template default para: default.denuncy.denuncy
+    Criado em Mon May 09 2016 14:41:23 GMT-0300 (BRT)
+
+.ui.fluid.card(rv-each-row='data.rows')
+    .content
+        .header {row.denuncy_key} - {row.denuncy}
+        .meta Keys: users_key
+        .description
+
+    .extra.content
+        span.left.floated.button
+            button.ui.orange.icon.mini.button(rv-data-action='api.edit', rv-data-key='row.denuncy_key')
+                i.edit.icon
+                | Editar
+
+        span.right.floated.button
+            button.ui.red.icon.mini.button(rv-data-action='api.delete', rv-data-key='row.denuncy_key')
+                i.delete.icon
+                | Remover

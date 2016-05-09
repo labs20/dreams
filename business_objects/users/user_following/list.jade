@@ -1,0 +1,12 @@
+//
+    Template default para: default.user.user_following
+    Criado em Mon May 09 2016 18:08:05 GMT-0300 (BRT)
+
+table.ui.compact.striped.celled.table
+    thead
+        th Users
+        th Following
+    tbody
+        tr(rv-each-row='data.rows')
+            td {row.users_key}
+            td {row.following_key}

@@ -1,0 +1,12 @@
+//
+    Template default para: default.comments.comments_dreams_rel
+    Criado em Mon May 09 2016 14:41:17 GMT-0300 (BRT)
+
+table.ui.compact.striped.celled.table
+    thead
+        th Comments
+        th Dreams
+    tbody
+        tr(rv-each-row='data.rows')
+            td {row.comments_key}
+            td {row.dreams_key}

@@ -1,0 +1,114 @@
+/* Estilos globais da aplicação */
+
+
+.app {
+    width: 100%;
+    height: 100%;
+    background-color: black;
+}
+
+.app:before {
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    content: "";
+    opacity: 0.4;
+    position: absolute;
+    background-image: url("../imgs/_intf/bgdreams2.png");
+    background-size: 61%;
+    background-position: center;
+}
+
+
+/***** Interface de login *****/
+
+#login {
+    height: 100%;
+}
+#login:before {
+    content: "";
+    background-image: url("../imgs/_intf/login1.png");
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0.6;
+    left: 0;
+    background-size: cover;
+    -webkit-filter: blur(7px);
+    filter: blur(7px);
+}
+
+.login-bar {
+    height: 150px;
+}
+
+#login>#logo_softlabs {
+    display: none;
+}
+
+#login > #logo_tshark {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    opacity: 0.6;
+}
+
+
+/***** Aplicação *****/
+
+.app-blue-box {
+    overflow: hidden !important;
+    zbackground: linear-gradient(to right, #f0f9ff 0%,rgba(220, 226, 249, 0.82) 100%) !important;
+    background-color: #0981bd !important;
+    border: 1px solid #AFB1DC;
+}
+
+.app-yellow-box {
+    overflow: hidden !important;
+    background: linear-gradient(to right, #f0f9ff 0%,rgba(249, 248, 220, 0.82) 100%) !important;
+    border: 1px solid #DCB7AF;
+}
+
+.app-red-box {
+    overflow: hidden !important;
+    background: linear-gradient(to right, #FFF0F6 0%,rgb(249, 220, 220) 100%) !important;
+    border: 1px solid #AFDCC9;
+}
+
+.app-green-box {
+    overflow: hidden !important;
+    background: linear-gradient(to right, #FFF0F6 0%,rgb(184, 239, 186) 100%) !important;
+    border: 1px solid #B4AFDC;
+}
+
+
+
+.app-header {
+    background: linear-gradient(to right, #88bfe8 0%,#70b0e0 100%) !important;
+}
+
+.app-logo-header {
+    width: 100px !important;
+}
+
+.app-menu-trigger{
+    margin-top: -18px !important;
+    margin-right: -23px !important;;
+}
+
+
+
+/***** Financas *****/
+
+.fluxo {
+    border-bottom: 1px dotted #d8d8d8;
+    width: 100%;
+}
+
+.fluxo>.historico{
+    width: 70%;
+}
+.fluxo>.valor{
+    width: 15%;
+}

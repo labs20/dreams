@@ -1,0 +1,61 @@
+/*
+ * Ajustes css para adaptação à dispositivos
+ *
+ */
+
+
+/***** Width até 1440px *****/
+
+@media screen and (max-width: 1440px) {
+
+}
+
+
+/***** Width até 1024px *****/
+
+@media screen and (max-width: 1024px) {
+
+}
+
+
+/***** Width até 768px *****/
+
+@media screen and (max-width: 768px) {
+
+}
+
+
+/***** Width até 425px *****/
+
+@media screen and (max-width: 425px) {
+
+    .app-logo-header {
+        width: 70px !important;
+    }
+}
+
+
+/***** Width até 375px *****/
+
+@media screen and (max-width: 375px) {
+
+    .app-logo-header {
+        width: 55px !important;
+    }
+
+}
+
+
+/***** Width até 360px *****/
+
+@media screen and (max-width: 360px) {
+
+    .app-logo-header {
+        width: 50px !important;
+        position: absolute;
+        opacity: 0.5;
+        bottom: 3px;
+        left: 6px;
+    }
+
+}
