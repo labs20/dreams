@@ -871,7 +871,7 @@ MySql.prototype.change = function *(op, provider, obj) {
 /**
  * Processa o resultado de um INSERT ou UPDATE
  * @param results
- * @param obj
+ * @param objd
  * @returns {*|boolean}
  */
 MySql.prototype._processChangeResults = function *(op, results, obj){
