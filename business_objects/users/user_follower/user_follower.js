@@ -37,6 +37,7 @@ function UserFollower(){
                         provider: ''
                     }
                 }
+                
             }
         }
     };
