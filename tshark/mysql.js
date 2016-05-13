@@ -47,7 +47,7 @@ function formatDateTimeIn(value, format){
  * @returns {string}
  */
 MySql.prototype.formatDateIn = function(value){
-    return value == formatDateTimeIn(value, '%d/%m/%Y');
+    return value == value ? formatDateTimeIn(value, '%d/%m/%Y') : '';
 };
 
 /**
@@ -56,7 +56,7 @@ MySql.prototype.formatDateIn = function(value){
  * @returns {string}
  */
 MySql.prototype.formatDateTimeIn = function(value){
-    return formatDateTimeIn(value, '%d/%m/%Y %H:%i:%s');
+    return value ? formatDateTimeIn(value, '%d/%m/%Y %H:%i:%s') : '';
 };
 
 //endregion
