@@ -29,14 +29,17 @@ function UsersDreamsRel(){
                     } 
                 }, 
                 dreams_key: {
-                    tipo: types.comp.key, label: 'Dreams:',
+                    tipo: types.comp.dropdown, label: 'Dreams:',
                     data: { 
                         key: ['dreams_key'], 
                         from: ['default', 'dreams', 'dreams'], 
-                        template: '{row.dreams_key} - {row.dream}', 
-                        provider: '' 
+                        template: '{row.dreams_key} - {row.description}',
+                        provider: 'coletivos'
                     } 
-                }, 
+                },
+                _accept: {
+                    tipo: types.comp.check, label: 'Aceita Participar:'
+                },
                 _creation_date: {
                     tipo: types.comp.datetime, label: ' Creation Date:'
                 }, 
@@ -64,8 +67,8 @@ function UsersDreamsRel(){
                 size  : types.form.size.small
             },
             linhas: [
-                {titulo: "Informações de users_dreams_rel"},
-                {users_key: 25, dreams_key: 25, _creation_date: 25, _exclusion_date: 25}
+                {titulo: "Sonhos coletivos"},
+                {_accept: 20, dreams_key: 80}
             ],
             ctrls: {
                 
@@ -86,30 +89,38 @@ function UsersDreamsRel(){
                 0: {
                     from: ['users', 'users_dreams_rel'],
                     fields: [
-                        
+                        '_accept'
                     ]
                 },
-                1: { 
-                    from: ['default', 'users', 'users'],
-                        join: {source: 0, tipo: types.join.left, on: 'users_key', where: ''},
-                    fields: [
-                        
-                    ]
-                },
-                2: { 
-                    from: ['default', 'dreams', 'dreams'],
+                1: {
+                    from: ['dreams', 'dreams'],
                         join: {source: 0, tipo: types.join.left, on: 'dreams_key', where: ''},
                     fields: [
-                        
+                        'dreams_key', 'users_key', 'owner_key',
+                        '_creation_date',
+                        // '_comments', '_likes', '_albuns', '_dreamers'
+                        '_status', 'description', 'img_cover'
+
+
+                        /*'_active', '_banned',
+                         '_last_changed_date', '_exclusion_date', '_coming_true_date', '_came_true_date',
+                         '_privacy'*/
                     ]
-                } 
+                },
+                2: {
+                    from: ['users', 'users'],
+                    join: {source: 0, tipo: types.join.inner, on: 'users_key', where: ''},
+                    fields: [
+
+                    ]
+                }
             },
             where: [ 
+                ['AND', 2, '_token', types.where.check],
                 ['AND', 0, 'users_key', types.where.check],
                 ['AND', 0, 'dreams_key', types.where.check]
             ],
             order: [
-                ['0', 'users_key', 'desc'],
                 ['0', 'dreams_key', 'desc']
             ],
             search: [ 
@@ -237,9 +248,12 @@ function UsersDreamsRel(){
      * Evento chamado na operação POST :: Insert
      * @param ret Objeto de retorno
      * @param ctx Contexto de chamada
-     *
+     */
      this.onInsert = function *(ret, ctx){
-
+         var data = yield this.select(ctx, 'profile', false, ['users', 'users']);
+         if (data.rows.length) {
+             this.params.row['users_key'] = data.rows[0]['users_key'];
+         }
     };
 
     /**
@@ -273,7 +287,6 @@ function UsersDreamsRel(){
      * @param ctx Contexto de chamada
      *
      this.onDelete = function *(ret, ctx){
-
     };
 
     /**

@@ -213,7 +213,7 @@ TShark.prototype.parseFields = function(templ, re){
  * @return { BizObject }
  */
 TShark.prototype.initObj = function(path, context){
-    var m = path.length == 4 ? path[2] : path[path.length-1];
+    var m = path.length > 3 ? path[2] : path[path.length-1];
     var tmp = this.app.context.config.apiMap[m].mod.split('/')
         , pack = tmp[0]
         , bobj = tmp[1]
@@ -253,8 +253,8 @@ TShark.prototype.initObj = function(path, context){
     mod.state   = context.state;
     mod.params  = extend(true, context.request.query || {}, context.request.body || {});
 
-    // Token
-    mod.params['_token'] = context.req.headers['token'];
+    // Token dreamer
+    mod.params['_token'] = context.req.headers['dreamer'];
 
     // Retorna
     return mod;
@@ -301,9 +301,8 @@ router.use(function *(next) {
     // Token
     if (this.req.headers['token']){
 
-        // Validar o token de acesso aqui
-
-        ok = true;
+        // Token de acesso
+        ok = (this.req.headers['token'] == this.app.context.config.security.token);
     }
 
     // Senão...

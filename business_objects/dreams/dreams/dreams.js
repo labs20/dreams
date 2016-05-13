@@ -121,23 +121,25 @@ function Dreams(){
 
     //region :: Providers
 
+    this.def_fields = [
+        'dreams_key', 'users_key', 'owner_key',
+        '_creation_date',
+        // '_comments', '_likes', '_albuns', '_dreamers'
+        '_status', 'description', 'img_cover'
+
+
+        /*'_active', '_banned',
+         '_last_changed_date', '_exclusion_date', '_coming_true_date', '_came_true_date',
+         '_privacy'*/
+    ];
+
     this.providers = {
 
         default: {
             sources: {
                 0: {
                     from: ['dreams', 'dreams'],
-                    fields: [
-                        'dreams_key', 'users_key', 'owner_key',
-                        '_creation_date',
-                        // '_comments', '_likes', '_albuns', '_dreamers'
-                        '_status', 'description', 'img_cover'
-
-
-                        /*'_active', '_banned',
-                        '_last_changed_date', '_exclusion_date', '_coming_true_date', '_came_true_date',
-                        '_privacy'*/
-                    ]
+                    fields: this.def_fields
                 },
                 1: { 
                     from: ['users', 'users'],
@@ -167,27 +169,36 @@ function Dreams(){
             showSQL: 0
         },
 
+        coletivos: {
+            sources: {
+                0: {
+                    from: ['dreams', 'dreams'],
+                    fields: this.def_fields
+                }
+            },
+            where: [
+                ['AND', 0, 'dreams_key', types.where.check],
+                ['AND', 0, '_privacy', '=', "'C'"]
+            ],
+            order: [
+                ['0', 'dreams_key', 'asc']
+            ],
+            search: [
+
+            ],
+            limit: 250,
+            showSQL: 0
+        },
+
         mydreams: {
             sources: {
                 0: {
                     from: ['dreams', 'dreams'],
-                    fields: [
-                        'dreams_key', 'users_key', 'owner_key',
-                        '_creation_date',
-                        // '_comments', '_likes', '_albuns', '_dreamers'
-                        '_status', 'description', 'img_cover'
-                    ]
+                    fields: this.def_fields
                 },
                 1: {
                     from: ['users', 'users'],
                     join: {source: 0, tipo: types.join.left, on: 'users_key', where: ''},
-                    fields: [
-
-                    ]
-                },
-                2: {
-                    from: ['users', 'users'],
-                    join: {source: 0, tipo: types.join.left, on: 'owner_key', where: ''},
                     fields: [
 
                     ]
@@ -206,6 +217,8 @@ function Dreams(){
             limit: 250,
             showSQL: 0
         },
+
+
 
         comingtrue: {
             sources: {
@@ -449,9 +462,12 @@ function Dreams(){
      * Evento chamado na operação POST :: Insert
      * @param ret Objeto de retorno
      * @param ctx Contexto de chamada
-     *
-     this.onInsert = function *(ret, ctx){
-
+     */
+     this.onInsert = function *(prov, ctx){
+        var data = yield this.select(ctx, 'profile', false, ['users', 'users']);
+        if (data.rows.length) {
+            this.params.row['users_key'] = data.rows[0]['users_key'];
+        }
     };
 
     /**

@@ -422,7 +422,7 @@ MySql.prototype._parseWhere = function(whereParams, params){
             sql += ' ' + where + ' ';
 
         // Where composto
-        } else {
+        } else if (where) {
 
             // ["AND", '0', "map_filiais_key", "check"]
             if (where.length == 4){
@@ -852,7 +852,16 @@ MySql.prototype.change = function *(op, provider, obj) {
 
         // Processa where
         if (op != 'ins') {
-            sql += '\n  WHERE ' + key + " = '" + obj.params.row[key] + "' ";
+            if (typeof key == 'string') {
+                sql += '\n  WHERE ' + key + " = '" + obj.params.row[key] + "' ";
+            }  else {
+                sql += '\n  WHERE ';
+                var and = '';
+                key.forEach(k => {
+                    sql += and + k + " = '" + obj.params.row[k] + "' ";
+                    and = ' AND ';
+                });
+            }
             sql += this._parseWhere(provider.sources[s]['where'], obj.params);
 
         } else {

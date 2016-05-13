@@ -73,6 +73,75 @@ app = $.extend(app, {
         verb: [],
         url: '',
         apis: [
+
+            {
+                id   : 'profile',
+                label: 'Profile',
+                verbs: [
+                    {op: 'get',     label: 'GET  "\\"'},
+                    {op: 'edit',    label: 'PUT  "\\"'},
+                    {op: 'create',  label: 'POST "\\"'},
+                ]
+            },
+            {
+                id   : 'follow',
+                label: 'Follow',
+                verbs: [
+                    {op: 'list',    label: 'GET  "\\"'},
+                    {op: 'create',  label: 'POST "\\"'},
+                    {op: 'delete',  label: 'DELETE "\\id"'}
+                ]
+            },
+            {
+                id   : 'followers',
+                label: 'Followers',
+                verbs: [
+                    {op: 'list',    label: 'GET  "\\"'},
+                    {op: 'edit',    label: 'PUT  "\\"'},
+                    {op: 'delete',  label: 'DELETE "\\id"'}
+                ]
+            },
+
+
+            {
+                id   : 'mydreams',
+                label: 'MyDreams',
+                verbs: [
+                    {op: 'list',    label: 'GET  "\\"'},
+                    {op: 'search',  label: 'GET  "\\?query=params"'},
+                    {op: 'get',     label: 'GET  "\\id"'},
+                    {op: 'create',  label: 'POST "\\"'},
+                    {op: 'edit',    label: 'PUT  "\\id"'},
+                    {op: 'delete',  label: 'DELETE "\\id"'}
+                ]
+            },
+            {
+                id   : 'dreamtoo',
+                label: 'DreamToo',
+                verbs: [
+                    {op: 'list',    label: 'GET  "\\"'},
+                    {op: 'create',  label: 'POST "\\"'},
+                    {op: 'edit',    label: 'PUT  "\\id"'},
+                    {op: 'delete',  label: 'DELETE "\\id"'}
+                ]
+            },
+
+
+
+
+            {
+                id   : 'dreams',
+                label: 'Dreams',
+                verbs: [
+                    {op: 'list',    label: 'GET  "\\"'},
+                    {op: 'search',  label: 'GET  "\\?query=params"'},
+                    {op: 'get',     label: 'GET  "\\id"'},
+                    {op: 'create',  label: 'POST "\\"'},
+                    {op: 'edit',    label: 'PUT  "\\id"'},
+                    {op: 'delete',  label: 'DELETE "\\id"'}
+                ]
+            },
+
             {
                 id   : 'users',
                 label: 'User',
@@ -81,42 +150,13 @@ app = $.extend(app, {
                     {op: 'search',  label: 'GET  "\\?query=params"'},
                     {op: 'get',     label: 'GET  "\\id"'},
                     {op: 'create',  label: 'POST "\\"'},
-                    {op: 'edit',    label: 'PUT  "\\id"'}
-                ]
-            },
-            {
-                id   : 'profile',
-                label: 'Profile',
-                verbs: [
-                    {op: 'get',     label: 'GET  "\\id"'},
-                    {op: 'edit',    label: 'PUT  "\\id"'}
-                ]
-            },
-            {
-                id   : 'follower',
-                label: 'Follower',
-                verbs: [
-                    {op: 'list',    label: 'GET  "\\"'},
-                    {op: 'search',  label: 'GET  "\\?query=params"'},
-                    {op: 'get',     label: 'GET  "\\id"'},
-                    {op: 'create',  label: 'POST "\\"'},
-                    {op: 'edit',    label: 'PUT  "\\id"'}
+                    {op: 'edit',    label: 'PUT  "\\id"'},
+                    {op: 'delete',  label: 'DELETE "\\id"'}
                 ]
             },
             {
                 id   : 'following',
                 label: 'Following',
-                verbs: [
-                    {op: 'list',    label: 'GET  "\\"'},
-                    {op: 'search',  label: 'GET  "\\?query=params"'},
-                    {op: 'get',     label: 'GET  "\\id"'},
-                    {op: 'create',  label: 'POST "\\"'},
-                    {op: 'edit',    label: 'PUT  "\\id"'}
-                ]
-            },
-            {
-                id   : 'dreams',
-                label: 'Dreams',
                 verbs: [
                     {op: 'list',    label: 'GET  "\\"'},
                     {op: 'search',  label: 'GET  "\\?query=params"'},
@@ -204,8 +244,10 @@ app = $.extend(app, {
     onBeforeXHR: function(xhr){
         var t = $('#token').val();
         if (t){
-            xhr.setRequestHeader ('Token', t);
+            xhr.setRequestHeader ('Dreamer', t);
         }
+        
+        xhr.setRequestHeader ('Token', 'b778b0aad2ceda1b1577a77ba1f295e14fce706b33d17469cf477194f76a633a');
         return xhr;
     },
 
@@ -214,12 +256,11 @@ app = $.extend(app, {
      * e monta o result na tela
      */
     onData: function(mod, response, next){
-        $('#listagem')
-            .empty()
-            .html('<pre style="width: 100%"><code style="width: 100%">' +
-                    JSON.stringify(response['data'], null, 4) +
-                  '</code></pre>'
-            );
+        app.updateRes(response);
+        next();
+    },
+    onDelete: function(mod, response, next){
+        app.updateRes(response);
         next();
     },
 
@@ -271,6 +312,14 @@ app = $.extend(app, {
 
     //region :: Regras de Negócio
 
+    updateRes: function(response){
+        $('#listagem')
+            .empty()
+            .html('<pre style="width: 100%"><code style="width: 100%">' +
+                JSON.stringify(response, null, 4) +
+                '</code></pre>'
+            );
+    },
 
     updateVerb: function(){
         var i = $(this).val();
@@ -289,6 +338,7 @@ app = $.extend(app, {
         switch (api){
             case 'get':
             case 'edit':
+            case 'delete':
                 api += ' ' + p;//data.key = p;
                 break;
 

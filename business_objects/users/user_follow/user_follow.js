@@ -1,17 +1,19 @@
 /**
- * BusinessObject :: UserFollower
- *  Implementação de objeto de negócio: user_follower.
+ * BusinessObject :: UserFollow
+ *  Implementação de objeto de negócio:
+ *
+ *    Usuários que o meu profile segue.
  *
  * Engine de aplicações - TShark.
  * @since Mon May 09 2016 18:08:05 GMT-0300 (BRT)
  * @constructor
  */
-function UserFollower(){
+function UserFollowing(){
 
     //region :: Definições do Objeto
 
     // Id
-    this.id = 'user_follower';
+    this.id = 'user_follow';
 
     // Map
     this.source = {
@@ -19,17 +21,17 @@ function UserFollower(){
         metadata: {
             key: ['users_key', 'follower_key'],
             fields: {
-                users_key: {
-                    tipo: types.comp.dropdown, label: 'Usuário:',
+                follower_key: {
+                    tipo: types.comp.key, label: 'Usuário:',
                     data: {
                         key: ['users_key'],
                         from: ['users', 'users'],
                         template: '{row.users_key} - {row.username}',
                         provider: 'profile'
                     }
-                }, 
-                follower_key: {
-                    tipo: types.comp.dropdown, label: 'Seguido por:',
+                },
+                users_key: {
+                    tipo: types.comp.dropdown, label: 'Seguindo:',
                     data: {
                         key: ['users_key'],
                         from: ['users', 'users'],
@@ -37,10 +39,12 @@ function UserFollower(){
                         provider: ''
                     }
                 },
+                _accept: {
+                    tipo: types.comp.int, label: 'Aceito:'
+                },
                 _creation_date: {
                     tipo: types.comp.timestamp, label: 'Data Criação:'
                 }
-                
             }
         }
     };
@@ -62,8 +66,8 @@ function UserFollower(){
                 size  : types.form.size.small
             },
             linhas: [
-                {titulo: "Follower de um Usuário"},
-                {users_key: 50, follower_key: 50}
+                {titulo: "Usuário seguindo:"},
+                {follower_key: 50, users_key: 50}
             ],
             ctrls: {
                 
@@ -82,19 +86,19 @@ function UserFollower(){
         default: {
             sources: {
                 0: {
-                    from: ['users', 'user_follower'],
+                    from: ['users', 'user_follow'],
                     fields: [
-                        
+                        '_accept'
                     ]
                 },
                 1: { // Este user
                     from: ['users', 'users'],
-                    join: {source: 0, tipo: types.join.inner, on: 'users_key', where: ''},
+                    join: {source: 0, tipo: types.join.inner, on: ['users_key', 'follower_key'], where: ''},
                     fields: [ ]
                 },
                 2: { // Followers
                     from: ['users', 'users'],
-                    join: {source: 0, tipo: types.join.inner, on: ['users_key', 'follower_key'], where: ''},
+                    join: {source: 0, tipo: types.join.inner, on: 'users_key', where: ''},
                     fields: [
                         'users_key', '_public', // '_to_come_true', '_comming_true', '_came_true',
                         // '_me_too'
@@ -102,14 +106,14 @@ function UserFollower(){
                     ]
                 }
             },
-            where: [ 
+            where: [
                 ['AND', 1, '_token', types.where.check],
             ],
             order: [
                 ['2', 'firstname', 'desc']
             ],
-            search: [ 
-                
+            search: [
+
             ],
             limit: 250,
             showSQL: 0
@@ -118,10 +122,10 @@ function UserFollower(){
         update: {
             sources: {
                 0: {
-                    from: ['users', 'user_follower'],
+                    from: ['users', 'user_follow'],
                     key: ['users_key', 'follower_key'],
                     where: [
-                        
+
                     ]
                 }
             },
@@ -231,14 +235,36 @@ function UserFollower(){
      
     /**
      * Evento chamado na operação POST :: Insert
+     * Registra que EU sou (follower_key) estou seguindo OUTRO (user_key)
      * @param ret Objeto de retorno
      * @param ctx Contexto de chamada
      */
-    this.onInsert = function *(ret, ctx){
-        var data = yield this.select(ctx, 'profile', {'_token': this.params['_token']}, ['users', 'users']);
+    this.onInsert = function *(prov, ctx){
+
+        // Pega o usuário pelo token
+        var data = yield this.select(ctx, 'profile', false, ['users', 'users'])
+            , follower_key
+            , _accept = 0
+        ;
+
         if (data.rows.length) {
-            this.params.row['users_key'] = data.rows[0]['users_key'];
+            follower_key = data.rows[0]['users_key'];
         }
+
+        // Verifica se o perfil do cara que irei seguir é público
+        data = yield this.select(ctx, 'default', {
+            where: [
+                ['AND', 0, 'users_key', '=', this.params.row['users_key']]
+            ]
+        }, ['users', 'users']);
+
+        if (data.rows.length) {
+            _accept = data.rows[0]['_public'];
+        }
+
+        this.params.row['follower_key'] = follower_key;
+        this.params.row['_accept'] = _accept;
+
     };
 
     /**
@@ -270,9 +296,10 @@ function UserFollower(){
      * Evento chamado na operação DELETE :: Delete
      * @param ret Objeto de retorno
      * @param ctx Contexto de chamada
-     *
-     this.onDelete = function *(ret, ctx){
-
+     */
+    this.onDelete = function *(prov, ctx){
+        prov.sources[0].key = 'users_key';
+        this.params.row['users_key'] = this.params.row['users_key,follower_key'];
     };
 
     /**
@@ -299,4 +326,4 @@ function UserFollower(){
 const types = require('../../../tshark/types');
 
 // Exporta
-module.exports = UserFollower;
+module.exports = UserFollowing;

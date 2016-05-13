@@ -15,7 +15,8 @@ module.exports = {
     },
     
     security:{
-        active: true 
+        active: true,
+        token: 'b778b0aad2ceda1b1577a77ba1f295e14fce706b33d17469cf477194f76a633a'
     },
 
     // Conexão à repositório de dados
@@ -32,18 +33,22 @@ module.exports = {
     apiMap: {
 
         // Usuários
-        'users'     : {mod: 'users/users',          provider: 'default'},
-        'profile'   : {mod: 'users/users',          provider: 'profile'},
-        'follower'  : {mod: 'users/user_follower',  provider: 'default'},
-        'following' : {mod: 'users/user_following', provider: 'default'},
-
+        'users'     : {mod: 'users/users',            provider: 'default'},
+        'profile'   : {mod: 'users/users',            provider: 'profile'},
+        'follow'    : {mod: 'users/user_follow',      provider: 'default'},
+        'followers' : {mod: 'users/user_followers',   provider: 'default'},
+        
         // Sonhos
-        'dreams'    : {mod: 'dreams/dreams',        provider: 'default'},
-        'mydreams'  : {mod: 'dreams/dreams',        provider: 'mydreams'},
-        'comingtrue': {mod: 'dreams/dreams',        provider: 'comingtrue'},
-        'cametrue'  : {mod: 'dreams/dreams',        provider: 'cametrue'},
-        'tocometrue': {mod: 'dreams/dreams',        provider: 'tocometrue'},
-        'dreamers'  : {mod: 'users/users',          provider: 'dreamers'},
+        'mydreams'  : {mod: 'dreams/dreams',          provider: 'mydreams'},
+        'dreamtoo'  : {mod: 'users/users_dreams_rel', provider: 'default'},
+        
+        'dreams'    : {mod: 'dreams/dreams',          provider: 'default'},
+        'comingtrue': {mod: 'dreams/dreams',          provider: 'comingtrue'},
+        'cametrue'  : {mod: 'dreams/dreams',          provider: 'cametrue'},
+        'tocometrue': {mod: 'dreams/dreams',          provider: 'tocometrue'},
+        'dreamers'  : {mod: 'users/users',            provider: 'dreamers'},
+        
+        'following' : {mod: 'users/user_following',   provider: 'default'},
     }
 
 };

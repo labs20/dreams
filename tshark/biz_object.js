@@ -405,7 +405,7 @@ BizObject.prototype.change = function *(op, ctx){
         ;
 
         if (this['on' + evento]){
-            yield this['on' + evento](res, ctx);
+            yield this['on' + evento](prov, ctx);
         }
 
         // Executa
