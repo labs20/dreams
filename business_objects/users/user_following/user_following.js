@@ -15,15 +15,30 @@ function UserFollowing(){
 
     // Map
     this.source = {
-        table: 'user_following',
+        table: 'user_follower',
         metadata: {
-            key: ['users_key', 'following_key'],
+            key: ['users_key', 'follower_key'],
             fields: {
+                follower_key: {
+                    tipo: types.comp.key, label: 'Usuário:',
+                    data: {
+                        key: ['users_key'],
+                        from: ['users', 'users'],
+                        template: '{row.users_key} - {row.username}',
+                        provider: 'profile'
+                    }
+                },
                 users_key: {
-                    tipo: types.comp.key, label: 'Users:'
-                }, 
-                following_key: {
-                    tipo: types.comp.key, label: 'Following:'
+                    tipo: types.comp.dropdown, label: 'Seguindo:',
+                    data: {
+                        key: ['users_key'],
+                        from: ['users', 'users'],
+                        template: '{row.users_key} - {row.username}',
+                        provider: ''
+                    }
+                },
+                _creation_date: {
+                    tipo: types.comp.timestamp, label: 'Data Criação:'
                 }
             }
         }
@@ -46,8 +61,8 @@ function UserFollowing(){
                 size  : types.form.size.small
             },
             linhas: [
-                {titulo: "Informações de user_following"},
-                {users_key: 25, following_key: 75}
+                {titulo: "Usuário seguindo:"},
+                {follower_key: 50, users_key: 50}
             ],
             ctrls: {
                 
@@ -66,22 +81,34 @@ function UserFollowing(){
         default: {
             sources: {
                 0: {
-                    from: ['default', 'user', 'user_following'],
+                    from: ['users', 'user_follower'],
                     fields: [
-                        
+
                     ]
-                }, 
+                },
+                1: { // Este user
+                    from: ['users', 'users'],
+                    join: {source: 0, tipo: types.join.inner, on: ['users_key', 'follower_key'], where: ''},
+                    fields: [ ]
+                },
+                2: { // Followers
+                    from: ['users', 'users'],
+                    join: {source: 0, tipo: types.join.inner, on: 'users_key', where: ''},
+                    fields: [
+                        'users_key', '_public', // '_to_come_true', '_comming_true', '_came_true',
+                        // '_me_too'
+                        'username', 'firstname', 'img_profile'
+                    ]
+                }
             },
-            where: [ 
-                ['AND', 0, 'users_key', types.where.check],
-                ['AND', 0, 'following_key', types.where.check]
+            where: [
+                ['AND', 1, '_token', types.where.check],
             ],
             order: [
-                ['0', 'users_key', 'desc'],
-                ['0', 'following_key', 'desc']
+                ['2', 'firstname', 'desc']
             ],
-            search: [ 
-                
+            search: [
+
             ],
             limit: 250,
             showSQL: 0
@@ -90,10 +117,10 @@ function UserFollowing(){
         update: {
             sources: {
                 0: {
-                    from: ['default', 'user', 'user_following'],
-                    key: ['users_key', 'following_key'],
+                    from: ['users', 'user_follower'],
+                    key: ['users_key', 'follower_key'],
                     where: [
-                        
+
                     ]
                 }
             },
@@ -205,9 +232,12 @@ function UserFollowing(){
      * Evento chamado na operação POST :: Insert
      * @param ret Objeto de retorno
      * @param ctx Contexto de chamada
-     *
-     this.onInsert = function *(ret, ctx){
-
+     */
+    this.onInsert = function *(ret, ctx){
+        var data = yield this.select(ctx, 'profile', {'_token': this.params['_token']}, ['users', 'users']);
+        if (data.rows.length) {
+            this.params.row['follower_key'] = data.rows[0]['users_key'];
+        }
     };
 
     /**
@@ -265,7 +295,7 @@ function UserFollowing(){
 }
 
 // Types
-const types = require('../../../../tshark/types');
+const types = require('../../../tshark/types');
 
 // Exporta
 module.exports = UserFollowing;

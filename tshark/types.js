@@ -75,6 +75,7 @@ Types.prototype.comp = {
     money       : { type: 'float',      comp: 'inpMoney',       default: 0.0 },
     percent     : { type: 'float',      comp: 'inpPercent',     default: 0.0 },
 
+    checkbox    : { type: 'bool',       comp: 'inpCheckBox',    default: 0 },
     check       : { type: 'bool',       comp: 'inpCheckBox',    default: 0 },
     slider      : { type: 'bool',       comp: 'inpSlider',      default: 0 },
     toggle      : { type: 'bool',       comp: 'inpToggle',      default: 0 },

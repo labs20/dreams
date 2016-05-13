@@ -25,7 +25,7 @@ function UserFollower(){
                         key: ['users_key'],
                         from: ['users', 'users'],
                         template: '{row.users_key} - {row.username}',
-                        provider: ''
+                        provider: 'profile'
                     }
                 }, 
                 follower_key: {
@@ -36,6 +36,9 @@ function UserFollower(){
                         template: '{row.users_key} - {row.username}',
                         provider: ''
                     }
+                },
+                _creation_date: {
+                    tipo: types.comp.timestamp, label: 'Data Criação:'
                 }
                 
             }
@@ -109,7 +112,7 @@ function UserFollower(){
                 
             ],
             limit: 250,
-            showSQL: 10
+            showSQL: 0
         },
 
         update: {
@@ -230,9 +233,12 @@ function UserFollower(){
      * Evento chamado na operação POST :: Insert
      * @param ret Objeto de retorno
      * @param ctx Contexto de chamada
-     *
-     this.onInsert = function *(ret, ctx){
-
+     */
+    this.onInsert = function *(ret, ctx){
+        var data = yield this.select(ctx, 'profile', {'_token': this.params['_token']}, ['users', 'users']);
+        if (data.rows.length) {
+            this.params.row['users_key'] = data.rows[0]['users_key'];
+        }
     };
 
     /**

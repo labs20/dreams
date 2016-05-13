@@ -413,7 +413,7 @@ TShark.prototype.modulo = function(path){
      * de API
      * @param data {{}} Dados a serem enviados
      * @param key {string} (Opcional) Se informado, os dados serão encontrados nessa chave em params no server
-     */
+     *
     TShark.prototype.modulo.prototype.send = function (data, key) {
         this._sending_ = this._sending_ || {};
         if (key){
@@ -427,12 +427,12 @@ TShark.prototype.modulo = function(path){
      * Alimenta o pacote de envio e reseta o _sending_
      * @param settings
      * @private
-     */
+     *
     TShark.prototype.modulo.prototype._send = function (settings) {
         settings.data = $.extend(settings.data, this._sending_);
         this._sending_ = {};
     };
-
+*/
     //endregion
 
 })($);

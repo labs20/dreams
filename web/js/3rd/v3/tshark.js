@@ -520,6 +520,32 @@ var CONSOLE_ON = true;
         });
         return obj;
     };
+
+
+    /**
+     * Armazena dados para serem enviados ao server no próximo call
+     * de API
+     * @param data {{}} Dados a serem enviados
+     * @param key {string} (Opcional) Se informado, os dados serão encontrados nessa chave em params no server
+     */
+    TShark.prototype.send = function (data, key) {
+        this._sending_ = this._sending_ || {};
+        if (key){
+            this._sending_[key] = data;
+        } else {
+            this._sending_ = $.extend(this._sending_, data);
+        }
+    };
+
+    /**
+     * Alimenta o pacote de envio e reseta o _sending_
+     * @param settings
+     * @private
+     */
+    TShark.prototype._send = function (settings) {
+        settings.data = $.extend(settings.data, this._sending_);
+        this._sending_ = {};
+    };
     
     //endregion
 

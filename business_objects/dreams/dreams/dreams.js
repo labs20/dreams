@@ -26,8 +26,8 @@ function Dreams(){
                     tipo: types.comp.dropdown, label: 'Users:',
                     data: { 
                         key: ['users_key'], 
-                        from: ['default', 'users', 'users'], 
-                        template: '{row.users_key} - {row.user}', 
+                        from: ['users', 'users'],
+                        template: '{row.users_key} - {row.username}',
                         provider: '' 
                     } 
                 }, 
@@ -35,22 +35,32 @@ function Dreams(){
                     tipo: types.comp.dropdown, label: 'Owner:',
                     data: { 
                         key: ['owner_key'], 
-                        from: ['default', 'users', 'owner'], 
-                        template: '{row.owner_key} - {row.owne}', 
+                        from: ['users', 'users'],
+                        template: '{row.owner_key} - {row.username}',
                         provider: '' 
                     } 
                 }, 
                 _privacy: {
-                    tipo: types.comp.int, label: ' Privacy:'
+                    tipo: types.comp.dropdown, label: ' Privacy:',
+                    data: {
+                        key: ['_privacy'],
+                        template: '{row._privacy} - {row.label}',
+                        rows: [
+                            {_privacy: 'P', label: 'Publico'},
+                            {_privacy: 'S', label: 'Secreto'},
+                            {_privacy: 'F', label: 'Seguidores'},
+                            {_privacy: 'C', label: 'Coletivo'}
+                        ]
+                    }
                 }, 
                 _status: {
-                    tipo: types.comp.int, label: ' Status:'
+                    tipo: types.comp.check, label: ' Status:'
                 }, 
                 _active: {
-                    tipo: types.comp.int, label: ' Active:'
+                    tipo: types.comp.check, label: ' Active:'
                 }, 
                 _banned: {
-                    tipo: types.comp.int, label: ' Banned:'
+                    tipo: types.comp.check, label: ' Banned:'
                 }, 
                 _creation_date: {
                     tipo: types.comp.datetime, label: ' Creation Date:'
@@ -95,10 +105,9 @@ function Dreams(){
             },
             linhas: [
                 {titulo: "Informações de dreams"},
-                {dreams_key: 25, users_key: 25, owner_key: 25, _privacy: 25}, 
-                {_status: 25, _active: 25, _banned: 25, _creation_date: 25}, 
-                {_last_changed_date: 25, _exclusion_date: 25, _coming_true_date: 25, _came_true_date: 25}, 
-                {description: 25, img_cover: 75}
+                {dreams_key: 10, users_key: 25, owner_key: 25, _privacy: 10, _active: 10, _banned: 10, _status: 10},
+                {description: 30, img_cover: 70},
+                {_creation_date: 20, _last_changed_date: 20, _exclusion_date: 20, _coming_true_date: 20, _came_true_date: 20}
             ],
             ctrls: {
                 
@@ -119,23 +128,31 @@ function Dreams(){
                 0: {
                     from: ['dreams', 'dreams'],
                     fields: [
-                        
+                        'dreams_key', 'users_key', 'owner_key',
+                        '_creation_date',
+                        // '_comments', '_likes', '_albuns', '_dreamers'
+                        '_status', 'description', 'img_cover'
+
+
+                        /*'_active', '_banned',
+                        '_last_changed_date', '_exclusion_date', '_coming_true_date', '_came_true_date',
+                        '_privacy'*/
                     ]
                 },
                 1: { 
-                    from: ['default', 'users', 'users'],
+                    from: ['users', 'users'],
                         join: {source: 0, tipo: types.join.left, on: 'users_key', where: ''},
                     fields: [
                         
                     ]
                 },
-                2: { 
-                    from: ['default', 'users', 'owner'],
+                /*2: {
+                    from: ['users', 'users'],
                         join: {source: 0, tipo: types.join.left, on: 'owner_key', where: ''},
                     fields: [
                         
                     ]
-                } 
+                } */
             },
             where: [ 
                 ['AND', 0, 'dreams_key', types.where.check]
@@ -145,6 +162,170 @@ function Dreams(){
             ],
             search: [ 
                 
+            ],
+            limit: 250,
+            showSQL: 0
+        },
+
+        mydreams: {
+            sources: {
+                0: {
+                    from: ['dreams', 'dreams'],
+                    fields: [
+                        'dreams_key', 'users_key', 'owner_key',
+                        '_creation_date',
+                        // '_comments', '_likes', '_albuns', '_dreamers'
+                        '_status', 'description', 'img_cover'
+                    ]
+                },
+                1: {
+                    from: ['users', 'users'],
+                    join: {source: 0, tipo: types.join.left, on: 'users_key', where: ''},
+                    fields: [
+
+                    ]
+                },
+                2: {
+                    from: ['users', 'users'],
+                    join: {source: 0, tipo: types.join.left, on: 'owner_key', where: ''},
+                    fields: [
+
+                    ]
+                }
+            },
+            where: [
+                ['AND', 1, '_token', types.where.get],
+                ['AND', 0, 'dreams_key', types.where.check]
+            ],
+            order: [
+                ['0', 'dreams_key', 'asc']
+            ],
+            search: [
+
+            ],
+            limit: 250,
+            showSQL: 0
+        },
+
+        comingtrue: {
+            sources: {
+                0: {
+                    from: ['dreams', 'dreams'],
+                    fields: [
+                        'dreams_key', 'users_key', 'owner_key',
+                        '_creation_date',
+                        // '_comments', '_likes', '_albuns', '_dreamers'
+                        '_status', 'description', 'img_cover'
+                    ]
+                },
+                1: {
+                    from: ['users', 'users'],
+                    join: {source: 0, tipo: types.join.left, on: 'users_key', where: ''},
+                    fields: [
+
+                    ]
+                },
+                2: {
+                    from: ['users', 'users'],
+                    join: {source: 0, tipo: types.join.left, on: 'owner_key', where: ''},
+                    fields: [
+
+                    ]
+                }
+            },
+            where: [
+                ['AND', 1, '_token', types.where.get],
+                ['AND', 0, '_coming_true_date', 'IS', 'NOT NULL'],
+                ['AND', 0, 'dreams_key', types.where.check],
+            ],
+            order: [
+                ['0', 'dreams_key', 'asc']
+            ],
+            search: [
+
+            ],
+            limit: 250,
+            showSQL: 0
+        },
+
+        cametrue: {
+            sources: {
+                0: {
+                    from: ['dreams', 'dreams'],
+                    fields: [
+                        'dreams_key', 'users_key', 'owner_key',
+                        '_creation_date',
+                        // '_comments', '_likes', '_albuns', '_dreamers'
+                        '_status', 'description', 'img_cover'
+                    ]
+                },
+                1: {
+                    from: ['users', 'users'],
+                    join: {source: 0, tipo: types.join.left, on: 'users_key', where: ''},
+                    fields: [
+
+                    ]
+                },
+                2: {
+                    from: ['users', 'users'],
+                    join: {source: 0, tipo: types.join.left, on: 'owner_key', where: ''},
+                    fields: [
+
+                    ]
+                }
+            },
+            where: [
+                ['AND', 1, '_token', types.where.get],
+                ['AND', 0, '_came_true_date', 'IS', 'NOT NULL'],
+                ['AND', 0, 'dreams_key', types.where.check],
+            ],
+            order: [
+                ['0', 'dreams_key', 'asc']
+            ],
+            search: [
+
+            ],
+            limit: 250,
+            showSQL: 0
+        },
+
+        tocometrue: {
+            sources: {
+                0: {
+                    from: ['dreams', 'dreams'],
+                    fields: [
+                        'dreams_key', 'users_key', 'owner_key',
+                        '_creation_date',
+                        // '_comments', '_likes', '_albuns', '_dreamers'
+                        '_status', 'description', 'img_cover'
+                    ]
+                },
+                1: {
+                    from: ['users', 'users'],
+                    join: {source: 0, tipo: types.join.left, on: 'users_key', where: ''},
+                    fields: [
+
+                    ]
+                },
+                2: {
+                    from: ['users', 'users'],
+                    join: {source: 0, tipo: types.join.left, on: 'owner_key', where: ''},
+                    fields: [
+
+                    ]
+                }
+            },
+            where: [
+                ['AND', 1, '_token', types.where.get],
+                ['AND', 0, '_coming_true_date', 'IS', 'NULL'],
+                ['AND', 0, '_came_true_date', 'IS', 'NULL'],
+                ['AND', 0, 'dreams_key', types.where.check],
+            ],
+            order: [
+                ['0', 'dreams_key', 'asc']
+            ],
+            search: [
+
             ],
             limit: 250,
             showSQL: 0

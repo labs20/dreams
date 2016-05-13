@@ -293,7 +293,16 @@ app = $.extend(app, {
                 break;
 
             case 'search':
-                data.query = p;
+                var tmp = p.split(',')
+                    , q = {}
+                ;
+                tmp.forEach(t => {
+                    var p2 = t.split('=');
+                    if (p2.length) {
+                        q[p2[0]] = p2[1];
+                    }
+                });
+                tshark.send(q);
                 break;
         }
 

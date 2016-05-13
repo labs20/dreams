@@ -290,18 +290,18 @@ BizObject.prototype.delete = function *(ctx){
  * Retorna um provider
  * @returns { {Promise} }
  */
-BizObject.prototype.getProvider = function (provId, from){
+BizObject.prototype.getProvider = function (provId, from, ctx){
 
     // Ajusta o dono
     var mod = this;
 
     if (typeof provId == 'string') {
         if (from) {
-            mod = require('business_objects/'
+            mod = this.engine.initObj(from, ctx); /* new (require('business_objects/'
                 + from[0] + '/'
                 + from[1] + '/'
                 + from[1] + '.js'
-            );
+            ))();*/
         }
 
         // Pega o provider
@@ -369,7 +369,7 @@ BizObject.prototype.select = function *(ctx, provider, params, from){
 
     // Pega o provider
     var prov = (typeof provider == 'string'
-            ? yield this.getProvider(provider, from)
+            ? yield this.getProvider(provider, from, ctx)
             : provider
     );
 

@@ -21,16 +21,15 @@ var path = require('path');
 global.appRoot = path.resolve(__dirname);
 
 /**
+ * Parsing de body (POST DATA && QUERY STRING)
+ */
+app.use(koaBody({formidable:{uploadDir: __dirname}}));
+
+/**
  * Configurações gerais da aplicação
  * @type { * }
  */
 app.context.config = require('./config');
-
-
-/**
- * Parsing de body (POST DATA && QUERY STRING)
- */
-app.use(koaBody({formidable:{uploadDir: __dirname}}));
 
 /**
  * Inicializa engine :: TShark

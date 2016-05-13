@@ -251,9 +251,12 @@ $.fn.api.settings.api = {};
             delete(d['moduleApi']);
             delete(d['action']);
             settings.data = $.extend(settings.data, d);
-            
+
             // Ajusta dados no módulo
-            mod._send(settings);
+            tshark._send(settings);
+
+            // Ajusta dados no módulo
+            //mod._send(settings);
             
             // Ajusta settings
             settings.dataType = 'JSON';

@@ -30,11 +30,20 @@ module.exports = {
 
     // Mapa de APIs dinâmicas
     apiMap: {
-        'users'     : {mod: 'users/users', provider: 'default'},
-        'profile'   : {mod: 'users/users', provider: 'profile'},
-        'dreamers'  : {mod: 'users/users', provider: 'dreamers'},
+
+        // Usuários
+        'users'     : {mod: 'users/users',          provider: 'default'},
+        'profile'   : {mod: 'users/users',          provider: 'profile'},
         'follower'  : {mod: 'users/user_follower',  provider: 'default'},
-        'following' : {mod: 'users/user_following', provider: 'default'}
+        'following' : {mod: 'users/user_following', provider: 'default'},
+
+        // Sonhos
+        'dreams'    : {mod: 'dreams/dreams',        provider: 'default'},
+        'mydreams'  : {mod: 'dreams/dreams',        provider: 'mydreams'},
+        'comingtrue': {mod: 'dreams/dreams',        provider: 'comingtrue'},
+        'cametrue'  : {mod: 'dreams/dreams',        provider: 'cametrue'},
+        'tocometrue': {mod: 'dreams/dreams',        provider: 'tocometrue'},
+        'dreamers'  : {mod: 'users/users',          provider: 'dreamers'},
     }
 
 };

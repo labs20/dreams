@@ -213,7 +213,8 @@ TShark.prototype.parseFields = function(templ, re){
  * @return { BizObject }
  */
 TShark.prototype.initObj = function(path, context){
-    var tmp = this.app.context.config.apiMap[path[2]].mod.split('/')
+    var m = path.length == 4 ? path[2] : path[path.length-1];
+    var tmp = this.app.context.config.apiMap[m].mod.split('/')
         , pack = tmp[0]
         , bobj = tmp[1]
     ;
@@ -252,13 +253,15 @@ TShark.prototype.initObj = function(path, context){
     mod.state   = context.state;
     mod.params  = extend(true, context.request.query || {}, context.request.body || {});
 
+    // Token
+    mod.params['_token'] = context.req.headers['token'];
+
     // Retorna
     return mod;
 };
 
 
 //region :: Roteamentos e entradas de APIs
-
 
 /**
  * Registra o inicio de um roteamento
@@ -347,9 +350,6 @@ router.get(/^\/api\/dreams\/.*$/, function *(next) {
         , len = this.state.api.path.length
     ;
 
-    // Token
-    mod.params['_token'] = this.req.headers['token'];
-
     // Form de edição
     if (len == 5) {
         this.state.api.call = 'edit';
@@ -375,7 +375,9 @@ router.get(/^\/api\/dreams\/.*$/, function *(next) {
             if (len == 4){
                 mod.params['key'] = this.state.api.path[3];
             }
-            mod.params['provider'] = {id: this.app.context.config.apiMap[this.state.api.path[2]].provider};
+            mod.params['provider'] = {
+                id: mod.params['provider'] ? mod.params['provider'] : this.app.context.config.apiMap[this.state.api.path[2]].provider
+            };
             this.body = yield mod.get(this);
         }
     }

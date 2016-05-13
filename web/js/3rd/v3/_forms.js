@@ -189,9 +189,9 @@ alertify.popupForm || alertify.dialog('popupForm', function(){
                 mod.form.comps[field].reset(ctrl['data']);
                 
             } else {
-                mod.form.comps[field].load({
-                    fields: parseFields(ctrl.data['template'])
-                });
+                d = ctrl.data;
+                d.fields = parseFields(ctrl.data['template']);
+                mod.form.comps[field].load(d);
             }
         }
 
