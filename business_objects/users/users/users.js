@@ -158,6 +158,32 @@ function Users(){
             showSQL: 0
         },
 
+        login  : {
+            sources: {
+                0: {
+                    from: ['users', 'users'],
+                    fields: [
+                        'users_key', '_public', '_pending_pwd', '_token',
+                        'username', 'password', 'email', 'facebook_id', 'instagram_id', 'twitter_id',
+                        'firstname', 'lastname', 'gender', 'birthday',
+                        'img_profile', 'img_background'
+                    ]
+                }
+            },
+            where: [
+                ['AND', 0, '_active', '=', 1],
+                ['AND', 0, '_banned', '<>', 1]
+            ],
+            order: [
+                ['0', 'users_key', 'desc']
+            ],
+            search: [
+
+            ],
+            limit: 250,
+            showSQL: 0
+        },
+
         users  : {
             sources: {
                 0: {
@@ -379,7 +405,36 @@ function Users(){
      *
      this.onAfterCreate = function *(ret){
 
-    };
+    };*/
+
+     this.onSelect = function *(prov, ctx){
+         if (prov['id'] == 'login') {
+
+             if (this.params['facebook_id']){
+                 prov.where.push(['AND', 0, 'facebook_id', '=', "'" + this.params['facebook_id'] + "'"]);
+
+             } else if (this.params['instagram_id']){
+                 prov.where.push(['AND', 0, 'instagram_id', '=', "'" + this.params['instagram_id'] + "'"]);
+
+             } else if (this.params['twitter_id']){
+                 prov.where.push(['AND', 0, 'twitter_id', '=', "'" + this.params['twitter_id'] + "'"]);
+
+             } else if (this.params['username']){
+                 var crypto = require('crypto')
+                     , hash = crypto.createHash('sha256')
+                 ;
+                 hash.update(this.params['password']);
+
+                 prov.where.push(['AND', 0, 'username', '=', "'" + this.params['username'] + "'"]);
+                 prov.where.push(['AND', 0, 'password', '=', "'" + hash.digest('hex') + "'"]);
+
+
+             } else {
+                 prov.where.push(['AND', 0, "'1'", '=', "'2'"]);
+             }
+
+         }
+     };
      
     /**
      * Evento chamado na operação POST :: Insert

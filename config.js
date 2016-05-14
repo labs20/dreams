@@ -32,6 +32,10 @@ module.exports = {
     // Mapa de APIs dinâmicas
     apiMap: {
 
+        // Login
+        'login'         : {mod: 'users/users',                  provider: 'login'},
+       // 'forgotpwd'     : {mod: 'users/users',                  exec: 'login'},
+
         // Usuários
         'users'         : {mod: 'users/users',                  provider: 'default'},
         'profile'       : {mod: 'users/users',                  provider: 'profile'},

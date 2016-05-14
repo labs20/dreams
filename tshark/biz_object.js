@@ -376,6 +376,10 @@ BizObject.prototype.select = function *(ctx, provider, params, from){
     // Customiza
     extend(true, prov, params || {});
 
+    if (this['onSelect']){
+        yield this['onSelect'](prov, ctx);
+    }
+
     // Executa
     return yield this.engine.db.select(prov, this);
 };

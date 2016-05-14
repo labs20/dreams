@@ -75,6 +75,13 @@ app = $.extend(app, {
         apis: [
 
             {
+                id   : 'login',
+                label: 'Login',
+                verbs: [
+                    {op: 'get',    label: 'GET  "\\"'}
+                ]
+            },
+            {
                 id   : 'profile',
                 label: 'Profile',
                 verbs: [
