@@ -20,6 +20,9 @@ var server      = require('koa-static-server')
 var path = require('path');
 global.appRoot = path.resolve(__dirname);
 
+// Parsing de nested querystring
+require('koa-qs')(app);
+
 /**
  * Parsing de body (POST DATA && QUERY STRING)
  */

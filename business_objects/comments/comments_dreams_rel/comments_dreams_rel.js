@@ -23,17 +23,17 @@ function CommentsDreamsRel(){
                     tipo: types.comp.key, label: 'Comments:',
                     data: { 
                         key: ['comments_key'], 
-                        from: ['default', 'users', 'comments'], 
+                        from: ['comments', 'comments'],
                         template: '{row.comments_key} - {row.comment}', 
                         provider: '' 
                     } 
                 }, 
                 dreams_key: {
-                    tipo: types.comp.key, label: 'Dreams:',
+                    tipo: types.comp.dropdown, label: 'Dreams:',
                     data: { 
                         key: ['dreams_key'], 
-                        from: ['default', 'dreams', 'dreams'], 
-                        template: '{row.dreams_key} - {row.dream}', 
+                        from: ['dreams', 'dreams'],
+                        template: '{row.dreams_key} - {row.description}',
                         provider: '' 
                     } 
                 }
@@ -58,11 +58,14 @@ function CommentsDreamsRel(){
                 size  : types.form.size.small
             },
             linhas: [
-                {titulo: "Informações de comments_dreams_rel"},
-                {comments_key: 25, dreams_key: 75}
+                {titulo: "Comentário de sonho"},
+                {comments_key: 25, dreams_key: 75},
+                {comment: 100}
             ],
             ctrls: {
-                
+                comment: {
+                    tipo: types.comp.text_big, label: "Comentário:"
+                }
             }
         }
 
@@ -80,31 +83,22 @@ function CommentsDreamsRel(){
                 0: {
                     from: ['comments', 'comments_dreams_rel'],
                     fields: [
-                        
                     ]
                 },
                 1: { 
-                    from: ['default', 'users', 'comments'],
+                    from: ['comments', 'comments'],
                         join: {source: 0, tipo: types.join.left, on: 'comments_key', where: ''},
                     fields: [
-                        
+                        'comments_key', 'users_key', '_creation_date', 'comment'
                     ]
-                },
-                2: { 
-                    from: ['default', 'dreams', 'dreams'],
-                        join: {source: 0, tipo: types.join.left, on: 'dreams_key', where: ''},
-                    fields: [
-                        
-                    ]
-                } 
+                }
             },
             where: [ 
                 ['AND', 0, 'comments_key', types.where.check],
                 ['AND', 0, 'dreams_key', types.where.check]
             ],
             order: [
-                ['0', 'comments_key', 'desc'],
-                ['0', 'dreams_key', 'desc']
+                ['0', 'comments_key', 'desc']
             ],
             search: [ 
                 
@@ -231,8 +225,14 @@ function CommentsDreamsRel(){
      * Evento chamado na operação POST :: Insert
      * @param ret Objeto de retorno
      * @param ctx Contexto de chamada
-     *
-     this.onInsert = function *(ret, ctx){
+     */
+    this.onInsert = function *(prov, ctx){
+
+        var c   = this.engine.initObj(['comments', 'comments'], ctx)
+            , r = yield c.insert(ctx)
+        ;
+
+        this.params.row['comments_key'] = r['result'];
 
     };
 

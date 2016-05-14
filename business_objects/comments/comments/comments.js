@@ -235,9 +235,15 @@ function Comments(){
      * Evento chamado na operação POST :: Insert
      * @param ret Objeto de retorno
      * @param ctx Contexto de chamada
-     *
+     */
      this.onInsert = function *(ret, ctx){
 
+         // Pega o usuário pelo token
+         var data = yield this.select(ctx, 'profile', false, ['users', 'users']);
+         if (data.rows.length) {
+             this.params.row['users_key'] = data.rows[0]['users_key'];
+         }
+         
     };
 
     /**

@@ -54,7 +54,16 @@ function Dreams(){
                     }
                 }, 
                 _status: {
-                    tipo: types.comp.check, label: ' Status:'
+                    tipo: types.comp.dropdown, label: ' Status:',
+                    data: {
+                        key: ['_status'],
+                        template: '{row._status} - {row.label}',
+                        rows: [
+                            {_status: '1', label: 'To Come true'},
+                            {_status: '2', label: 'Coming True'},
+                            {_status: '3', label: 'Came True'}
+                        ]
+                    }
                 }, 
                 _active: {
                     tipo: types.comp.check, label: ' Active:'
@@ -72,11 +81,14 @@ function Dreams(){
                     tipo: types.comp.datetime, label: ' Exclusion Date:'
                 }, 
                 _coming_true_date: {
-                    tipo: types.comp.datetime, label: ' Coming True Date:'
+                    tipo: types.comp.date, label: ' Coming True Date:'
                 }, 
                 _came_true_date: {
-                    tipo: types.comp.datetime, label: ' Came True Date:'
-                }, 
+                    tipo: types.comp.date, label: ' Came True Date:'
+                },
+                _to_come_true_date: {
+                    tipo: types.comp.date, label: ' To Come True Date:'
+                },
                 description: {
                     tipo: types.comp.text, label: 'Description:'
                 }, 
@@ -106,7 +118,7 @@ function Dreams(){
             linhas: [
                 {titulo: "Informações de dreams"},
                 {dreams_key: 10, users_key: 25, owner_key: 25, _privacy: 10, _active: 10, _banned: 10, _status: 10},
-                {description: 30, img_cover: 70},
+                {description: 30, _to_come_true_date: 20, img_cover: 50},
                 {_creation_date: 20, _last_changed_date: 20, _exclusion_date: 20, _coming_true_date: 20, _came_true_date: 20}
             ],
             ctrls: {
@@ -121,6 +133,10 @@ function Dreams(){
 
     //region :: Providers
 
+    /**
+     * Fields default
+     * @type {string[]}
+     */
     this.def_fields = [
         'dreams_key', 'users_key', 'owner_key',
         '_creation_date',
@@ -133,8 +149,12 @@ function Dreams(){
          '_privacy'*/
     ];
 
+    /**
+     * Provedores de dados
+     */
     this.providers = {
 
+        // Padrão
         default: {
             sources: {
                 0: {
@@ -169,6 +189,7 @@ function Dreams(){
             showSQL: 0
         },
 
+        // Sonhos coletivos
         coletivos: {
             sources: {
                 0: {
@@ -190,6 +211,7 @@ function Dreams(){
             showSQL: 0
         },
 
+        // Sonhos do token
         mydreams: {
             sources: {
                 0: {
@@ -218,100 +240,12 @@ function Dreams(){
             showSQL: 0
         },
 
-
-
-        comingtrue: {
-            sources: {
-                0: {
-                    from: ['dreams', 'dreams'],
-                    fields: [
-                        'dreams_key', 'users_key', 'owner_key',
-                        '_creation_date',
-                        // '_comments', '_likes', '_albuns', '_dreamers'
-                        '_status', 'description', 'img_cover'
-                    ]
-                },
-                1: {
-                    from: ['users', 'users'],
-                    join: {source: 0, tipo: types.join.left, on: 'users_key', where: ''},
-                    fields: [
-
-                    ]
-                },
-                2: {
-                    from: ['users', 'users'],
-                    join: {source: 0, tipo: types.join.left, on: 'owner_key', where: ''},
-                    fields: [
-
-                    ]
-                }
-            },
-            where: [
-                ['AND', 1, '_token', types.where.get],
-                ['AND', 0, '_coming_true_date', 'IS', 'NOT NULL'],
-                ['AND', 0, 'dreams_key', types.where.check],
-            ],
-            order: [
-                ['0', 'dreams_key', 'asc']
-            ],
-            search: [
-
-            ],
-            limit: 250,
-            showSQL: 0
-        },
-
-        cametrue: {
-            sources: {
-                0: {
-                    from: ['dreams', 'dreams'],
-                    fields: [
-                        'dreams_key', 'users_key', 'owner_key',
-                        '_creation_date',
-                        // '_comments', '_likes', '_albuns', '_dreamers'
-                        '_status', 'description', 'img_cover'
-                    ]
-                },
-                1: {
-                    from: ['users', 'users'],
-                    join: {source: 0, tipo: types.join.left, on: 'users_key', where: ''},
-                    fields: [
-
-                    ]
-                },
-                2: {
-                    from: ['users', 'users'],
-                    join: {source: 0, tipo: types.join.left, on: 'owner_key', where: ''},
-                    fields: [
-
-                    ]
-                }
-            },
-            where: [
-                ['AND', 1, '_token', types.where.get],
-                ['AND', 0, '_came_true_date', 'IS', 'NOT NULL'],
-                ['AND', 0, 'dreams_key', types.where.check],
-            ],
-            order: [
-                ['0', 'dreams_key', 'asc']
-            ],
-            search: [
-
-            ],
-            limit: 250,
-            showSQL: 0
-        },
-
+        // Sonhos do token - Com data para realizar
         tocometrue: {
             sources: {
                 0: {
                     from: ['dreams', 'dreams'],
-                    fields: [
-                        'dreams_key', 'users_key', 'owner_key',
-                        '_creation_date',
-                        // '_comments', '_likes', '_albuns', '_dreamers'
-                        '_status', 'description', 'img_cover'
-                    ]
+                    fields: this.def_fields
                 },
                 1: {
                     from: ['users', 'users'],
@@ -319,20 +253,12 @@ function Dreams(){
                     fields: [
 
                     ]
-                },
-                2: {
-                    from: ['users', 'users'],
-                    join: {source: 0, tipo: types.join.left, on: 'owner_key', where: ''},
-                    fields: [
-
-                    ]
                 }
             },
             where: [
                 ['AND', 1, '_token', types.where.get],
-                ['AND', 0, '_coming_true_date', 'IS', 'NULL'],
-                ['AND', 0, '_came_true_date', 'IS', 'NULL'],
                 ['AND', 0, 'dreams_key', types.where.check],
+                ['AND', 0, '_status', '=', '1']
             ],
             order: [
                 ['0', 'dreams_key', 'asc']
@@ -344,6 +270,68 @@ function Dreams(){
             showSQL: 0
         },
 
+        // Sonhos do token - Com data de realizando
+        comingtrue: {
+            sources: {
+                0: {
+                    from: ['dreams', 'dreams'],
+                    fields: this.def_fields
+                },
+                1: {
+                    from: ['users', 'users'],
+                    join: {source: 0, tipo: types.join.left, on: 'users_key', where: ''},
+                    fields: [
+
+                    ]
+                }
+            },
+            where: [
+                ['AND', 1, '_token', types.where.get],
+                ['AND', 0, 'dreams_key', types.where.check],
+                ['AND', 0, '_status', '=', '2']
+            ],
+            order: [
+                ['0', 'dreams_key', 'asc']
+            ],
+            search: [
+
+            ],
+            limit: 250,
+            showSQL: 0
+        },
+
+        // Sonhos do token - Realizados
+        cametrue: {
+            sources: {
+                0: {
+                    from: ['dreams', 'dreams'],
+                    fields: this.def_fields
+                },
+                1: {
+                    from: ['users', 'users'],
+                    join: {source: 0, tipo: types.join.left, on: 'users_key', where: ''},
+                    fields: [
+
+                    ]
+                }
+            },
+            where: [
+                ['AND', 1, '_token', types.where.get],
+                ['AND', 0, 'dreams_key', types.where.check],
+                ['AND', 0, '_status', '=', '3']
+            ],
+            order: [
+                ['0', 'dreams_key', 'asc']
+            ],
+            search: [
+
+            ],
+            limit: 250,
+            showSQL: 0
+        },
+
+
+        // Update global
         update: {
             sources: {
                 0: {

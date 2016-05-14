@@ -109,6 +109,7 @@ function UserFollower(){
             },
             where: [ 
                 ['AND', 1, '_token', types.where.check],
+                ['AND', 0, '_accept', '=', '1'],
                 ['AND', 0, 'follower_key', types.where.check],
             ],
             order: [

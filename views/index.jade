@@ -44,7 +44,7 @@ block content
                     | Validação de Chamadas de API
                 .field
                     .fields
-                        .two.wide.field
+                        .four.wide.field
                             select.ui.fluid.dropdown(rv-on-change='updateVerb')
                                 option(value='') API...
                                 option(
@@ -52,7 +52,7 @@ block content
                                     rv-value='row._index_'
                                     rv-text='row.label'
                                 )
-                        .two.wide.field
+                        .four.wide.field
                             select.ui.fluid.dropdown#verb
                                 option(value='') Verbo...
                                 option(
@@ -61,13 +61,18 @@ block content
                                     rv-text='row.label'
                                 )
 
-                        .four.wide.field
+                        .six.wide.field
                             input#url(type='text', placeholder='/dreams/', rv-value='struct.url')
 
-                        .three.wide.field
+                        .two.wide.field
+                            input#key(type='text', placeholder='key')
+
+                .field
+                    .fields
+                        .seven.wide.field
                             input#params(type='text', placeholder='params')
 
-                        .three.wide.field
+                        .seven.wide.field
                             input#token(type='text', placeholder='token')
 
                         .two.wide.field
@@ -79,7 +84,7 @@ block content
                 | Resultado
 
             // Listagem
-            #listagem.two.cards.ui(style='height: 300px; overflow: scroll;')
+            #listagem.two.cards.ui(style='height: 350px; overflow: scroll;')
 
         // Janela central
         #lists.ui.modal

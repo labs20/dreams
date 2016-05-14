@@ -213,11 +213,18 @@ TShark.prototype.parseFields = function(templ, re){
  * @return { BizObject }
  */
 TShark.prototype.initObj = function(path, context){
-    var m = path.length > 3 ? path[2] : path[path.length-1];
-    var tmp = this.app.context.config.apiMap[m].mod.split('/')
-        , pack = tmp[0]
-        , bobj = tmp[1]
+    var m = path.length > 3 ? path[2] : path[path.length-1]
+        , pack
+        , bobj
     ;
+    if (this.app.context.config.apiMap[m]) {
+        var tmp = this.app.context.config.apiMap[m].mod.split('/');
+        pack = tmp[0];
+        bobj = tmp[1];
+    } else {
+        pack = path[0];
+        bobj = path[1];
+    }
 
     // Business Object
     var op = 'business_objects/'

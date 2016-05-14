@@ -84,27 +84,19 @@ function CommentsAlbunsRel(){
                     ]
                 },
                 1: { 
-                    from: ['default', 'users', 'comments'],
+                    from: ['users', 'comments'],
                         join: {source: 0, tipo: types.join.left, on: 'comments_key', where: ''},
                     fields: [
-                        
+                        'comments_key', 'users_key', '_creation_date', 'comment'
                     ]
-                },
-                2: { 
-                    from: ['default', 'users', 'albuns'],
-                        join: {source: 0, tipo: types.join.left, on: 'albuns_key', where: ''},
-                    fields: [
-                        
-                    ]
-                } 
+                }
             },
             where: [ 
                 ['AND', 0, 'comments_key', types.where.check],
                 ['AND', 0, 'albuns_key', types.where.check]
             ],
             order: [
-                ['0', 'comments_key', 'desc'],
-                ['0', 'albuns_key', 'desc']
+                ['0', 'comments_key', 'desc']
             ],
             search: [ 
                 
@@ -231,8 +223,14 @@ function CommentsAlbunsRel(){
      * Evento chamado na operação POST :: Insert
      * @param ret Objeto de retorno
      * @param ctx Contexto de chamada
-     *
+     */
      this.onInsert = function *(ret, ctx){
+
+         var c   = this.engine.initObj(['comments', 'comments'], ctx)
+             , r = yield c.insert(ctx)
+             ;
+
+         this.params.row['comments_key'] = r['result'];
 
     };
 

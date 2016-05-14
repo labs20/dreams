@@ -125,44 +125,13 @@ app = $.extend(app, {
                     {op: 'delete',  label: 'DELETE "\\id"'}
                 ]
             },
-
-
-
-
             {
-                id   : 'dreams',
-                label: 'Dreams',
+                id   : 'tocometrue',
+                label: 'To Come True',
                 verbs: [
                     {op: 'list',    label: 'GET  "\\"'},
                     {op: 'search',  label: 'GET  "\\?query=params"'},
                     {op: 'get',     label: 'GET  "\\id"'},
-                    {op: 'create',  label: 'POST "\\"'},
-                    {op: 'edit',    label: 'PUT  "\\id"'},
-                    {op: 'delete',  label: 'DELETE "\\id"'}
-                ]
-            },
-
-            {
-                id   : 'users',
-                label: 'User',
-                verbs: [
-                    {op: 'list',    label: 'GET  "\\"'},
-                    {op: 'search',  label: 'GET  "\\?query=params"'},
-                    {op: 'get',     label: 'GET  "\\id"'},
-                    {op: 'create',  label: 'POST "\\"'},
-                    {op: 'edit',    label: 'PUT  "\\id"'},
-                    {op: 'delete',  label: 'DELETE "\\id"'}
-                ]
-            },
-            {
-                id   : 'following',
-                label: 'Following',
-                verbs: [
-                    {op: 'list',    label: 'GET  "\\"'},
-                    {op: 'search',  label: 'GET  "\\?query=params"'},
-                    {op: 'get',     label: 'GET  "\\id"'},
-                    {op: 'create',  label: 'POST "\\"'},
-                    {op: 'edit',    label: 'PUT  "\\id"'}
                 ]
             },
             {
@@ -183,15 +152,29 @@ app = $.extend(app, {
                     {op: 'get',     label: 'GET  "\\id"'},
                 ]
             },
+            
             {
-                id   : 'tocometrue',
-                label: 'To Come True',
+                id   : 'dreamcomments',
+                label: 'DreamComments',
                 verbs: [
                     {op: 'list',    label: 'GET  "\\"'},
                     {op: 'search',  label: 'GET  "\\?query=params"'},
                     {op: 'get',     label: 'GET  "\\id"'},
+                    {op: 'create',  label: 'POST "\\"'},
+                    {op: 'edit',    label: 'PUT  "\\id"'},
+                    {op: 'delete',  label: 'DELETE "\\id"'}
                 ]
             },
+            {
+                id   : 'dreamlikes',
+                label: 'DreamLikes',
+                verbs: [
+                    {op: 'list',    label: 'GET  "\\"'},
+                    {op: 'create',  label: 'POST "\\"'},
+                    {op: 'delete',  label: 'DELETE "\\id"'}
+                ]
+            },
+
             {
                 id   : 'albuns',
                 label: 'Album',
@@ -203,25 +186,28 @@ app = $.extend(app, {
                 ]
             },
             {
-                id   : 'comments',
-                label: 'Comments',
+                id   : 'albumcomments',
+                label: 'AlbumComments',
                 verbs: [
                     {op: 'list',    label: 'GET  "\\"'},
                     {op: 'search',  label: 'GET  "\\?query=params"'},
                     {op: 'get',     label: 'GET  "\\id"'},
                     {op: 'create',  label: 'POST "\\"'},
-                    {op: 'edit',    label: 'PUT  "\\id"'}
+                    {op: 'edit',    label: 'PUT  "\\id"'},
+                    {op: 'delete',  label: 'DELETE "\\id"'}
                 ]
             },
             {
-                id   : 'likes',
-                label: 'Likes',
+                id   : 'albumlikes',
+                label: 'AlbumLikes',
                 verbs: [
                     {op: 'list',    label: 'GET  "\\"'},
                     {op: 'create',  label: 'POST "\\"'},
-                    {op: 'edit',    label: 'PUT  "\\id"'}
+                    {op: 'edit',    label: 'PUT  "\\id"'},
+                    {op: 'delete',  label: 'DELETE "\\id"'}
                 ]
             },
+
             {
                 id   : 'denuncy',
                 label: 'Denuncy',
@@ -231,6 +217,32 @@ app = $.extend(app, {
                     {op: 'get',     label: 'GET  "\\id"'},
                     {op: 'create',  label: 'POST "\\"'},
                     {op: 'edit',    label: 'PUT  "\\id"'}
+                ]
+            },
+            
+
+            {
+                id   : 'dreams',
+                label: 'Dreams (API Global)',
+                verbs: [
+                    {op: 'list',    label: 'GET  "\\"'},
+                    {op: 'search',  label: 'GET  "\\?query=params"'},
+                    {op: 'get',     label: 'GET  "\\id"'},
+                    {op: 'create',  label: 'POST "\\"'},
+                    {op: 'edit',    label: 'PUT  "\\id"'},
+                    {op: 'delete',  label: 'DELETE "\\id"'}
+                ]
+            },            
+            {
+                id   : 'users',
+                label: 'User (API Global)',
+                verbs: [
+                    {op: 'list',    label: 'GET  "\\"'},
+                    {op: 'search',  label: 'GET  "\\?query=params"'},
+                    {op: 'get',     label: 'GET  "\\id"'},
+                    {op: 'create',  label: 'POST "\\"'},
+                    {op: 'edit',    label: 'PUT  "\\id"'},
+                    {op: 'delete',  label: 'DELETE "\\id"'}
                 ]
             }
         ]
@@ -331,6 +343,7 @@ app = $.extend(app, {
         var path  = $('#url').val().split('/')
             , p   = $('#params').val()
             , v   = $('#verb').val()
+            , k   = $('#key').val()
             , api = app.struct.verb[v].op
             , data = {}
         ;
@@ -338,23 +351,23 @@ app = $.extend(app, {
         switch (api){
             case 'get':
             case 'edit':
+            case 'list':
             case 'delete':
-                api += ' ' + p;//data.key = p;
+                api += ' ' + k;
                 break;
 
-            case 'search':
-                var tmp = p.split(',')
-                    , q = {}
-                ;
-                tmp.forEach(t => {
-                    var p2 = t.split('=');
-                    if (p2.length) {
-                        q[p2[0]] = p2[1];
-                    }
-                });
-                tshark.send(q);
-                break;
         }
+
+        var tmp = p.split(',')
+            , q = {}
+        ;
+        tmp.forEach(t => {
+            var p2 = t.split('=');
+            if (p2.length) {
+                q[p2[0]] = p2[1];
+            }
+        });
+        tshark.send(q);
 
         tshark.call(path.join(' ') + ' ' + api, data);
     }

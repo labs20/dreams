@@ -29,16 +29,16 @@ function UsersLikeDreamsRel(){
                     } 
                 }, 
                 dreams_key: {
-                    tipo: types.comp.key, label: 'Dreams:',
+                    tipo: types.comp.dropdown, label: 'Dream to Like:',
                     data: { 
                         key: ['dreams_key'], 
-                        from: ['default', 'dreams', 'dreams'], 
-                        template: '{row.dreams_key} - {row.dream}', 
+                        from: ['dreams', 'dreams'], 
+                        template: '{row.dreams_key} - {row.description}', 
                         provider: '' 
                     } 
                 }, 
                 _creation_date: {
-                    tipo: types.comp.datetime, label: ' Creation Date:'
+                    tipo: types.comp.timestamp, label: ' Creation Date:'
                 }
             }
         }
@@ -61,8 +61,8 @@ function UsersLikeDreamsRel(){
                 size  : types.form.size.small
             },
             linhas: [
-                {titulo: "Informações de users_like_dreams_rel"},
-                {users_key: 25, dreams_key: 25, _creation_date: 50}
+                {titulo: "Like Dream"},
+                {_creation_date: 25, dreams_key: 75}
             ],
             ctrls: {
                 
@@ -83,31 +83,23 @@ function UsersLikeDreamsRel(){
                 0: {
                     from: ['users', 'users_like_dreams_rel'],
                     fields: [
-                        
+                        '_creation_date'
                     ]
                 },
-                1: { 
-                    from: ['default', 'users', 'users'],
-                        join: {source: 0, tipo: types.join.left, on: 'users_key', where: ''},
-                    fields: [
-                        
-                    ]
-                },
-                2: { 
-                    from: ['default', 'dreams', 'dreams'],
+                /*1: {
+                    from: ['dreams', 'dreams'],
                         join: {source: 0, tipo: types.join.left, on: 'dreams_key', where: ''},
                     fields: [
                         
                     ]
-                } 
+                } */
             },
             where: [ 
                 ['AND', 0, 'users_key', types.where.check],
                 ['AND', 0, 'dreams_key', types.where.check]
             ],
             order: [
-                ['0', 'users_key', 'desc'],
-                ['0', 'dreams_key', 'desc']
+                ['0', 'users_key', 'desc']
             ],
             search: [ 
                 
@@ -234,9 +226,14 @@ function UsersLikeDreamsRel(){
      * Evento chamado na operação POST :: Insert
      * @param ret Objeto de retorno
      * @param ctx Contexto de chamada
-     *
+     */
      this.onInsert = function *(ret, ctx){
 
+         // Pega o usuário pelo token
+         var data = yield this.select(ctx, 'profile', false, ['users', 'users']);
+         if (data.rows.length) {
+             this.params.row['users_key'] = data.rows[0]['users_key'];
+         }
     };
 
     /**
@@ -268,8 +265,15 @@ function UsersLikeDreamsRel(){
      * Evento chamado na operação DELETE :: Delete
      * @param ret Objeto de retorno
      * @param ctx Contexto de chamada
-     *
+     */
      this.onDelete = function *(ret, ctx){
+
+         // Pega o usuário pelo token
+         var data = yield this.select(ctx, 'profile', false, ['users', 'users']);
+         if (data.rows.length) {
+             this.params.row['users_key'] = data.rows[0]['users_key'];
+         }
+         this.params.row['dreams_key'] = this.params['users_key,dreams_key'];
 
     };
 

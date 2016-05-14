@@ -87,14 +87,14 @@ function UsersLikeAlbunsRel(){
                     ]
                 },
                 1: { 
-                    from: ['default', 'users', 'users'],
+                    from: ['users', 'users'],
                         join: {source: 0, tipo: types.join.left, on: 'users_key', where: ''},
                     fields: [
                         
                     ]
                 },
                 2: { 
-                    from: ['default', 'users', 'albuns'],
+                    from: ['users', 'albuns'],
                         join: {source: 0, tipo: types.join.left, on: 'albuns_key', where: ''},
                     fields: [
                         
@@ -106,8 +106,7 @@ function UsersLikeAlbunsRel(){
                 ['AND', 0, 'albuns_key', types.where.check]
             ],
             order: [
-                ['0', 'users_key', 'desc'],
-                ['0', 'albuns_key', 'desc']
+                ['0', 'users_key', 'desc']
             ],
             search: [ 
                 

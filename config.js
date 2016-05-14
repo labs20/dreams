@@ -33,22 +33,30 @@ module.exports = {
     apiMap: {
 
         // Usuários
-        'users'     : {mod: 'users/users',            provider: 'default'},
-        'profile'   : {mod: 'users/users',            provider: 'profile'},
-        'follow'    : {mod: 'users/user_follow',      provider: 'default'},
-        'followers' : {mod: 'users/user_followers',   provider: 'default'},
+        'users'         : {mod: 'users/users',                  provider: 'default'},
+        'profile'       : {mod: 'users/users',                  provider: 'profile'},
+        'follow'        : {mod: 'users/user_follow',            provider: 'default'},
+        'followers'     : {mod: 'users/user_followers',         provider: 'default'},
         
         // Sonhos
-        'mydreams'  : {mod: 'dreams/dreams',          provider: 'mydreams'},
-        'dreamtoo'  : {mod: 'users/users_dreams_rel', provider: 'default'},
-        
-        'dreams'    : {mod: 'dreams/dreams',          provider: 'default'},
-        'comingtrue': {mod: 'dreams/dreams',          provider: 'comingtrue'},
-        'cametrue'  : {mod: 'dreams/dreams',          provider: 'cametrue'},
-        'tocometrue': {mod: 'dreams/dreams',          provider: 'tocometrue'},
-        'dreamers'  : {mod: 'users/users',            provider: 'dreamers'},
-        
-        'following' : {mod: 'users/user_following',   provider: 'default'},
+        'dreams'        : {mod: 'dreams/dreams',                provider: 'default'},
+        'mydreams'      : {mod: 'dreams/dreams',                provider: 'mydreams'},
+        'dreamtoo'      : {mod: 'users/users_dreams_rel',       provider: 'default'},
+        'tocometrue'    : {mod: 'dreams/dreams',                provider: 'tocometrue'},
+        'comingtrue'    : {mod: 'dreams/dreams',                provider: 'comingtrue'},
+        'cametrue'      : {mod: 'dreams/dreams',                provider: 'cametrue'},
+
+        'dreamcomments' : {mod: 'comments/comments_dreams_rel', provider: 'default'},
+        'dreamlikes'    : {mod: 'users/users_like_dreams_rel',  provider: 'default'},
+
+        'albuns'        : {mod: 'users/user_following',         provider: 'default'},
+        'albumcomments' : {mod: 'comments/comments_albuns_rel', provider: 'default'},
+        'albumlikes'    : {mod: 'users/users_like_albuns_rel',  provider: 'default'},
+
+        'denuncy'       : {mod: 'denuncy/denuncy',              provider: 'default'},
+        'dreamdenuncy'  : {mod: 'denuncy/denuncy_dreams_rel',   provider: 'default'},
+        'albumdenuncy'  : {mod: 'denuncy/denuncy_albuns_rel',   provider: 'default'}
+
     }
 
 };
