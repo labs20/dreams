@@ -256,10 +256,10 @@ app = $.extend(app, {
     onBeforeXHR: function(xhr){
         var t = $('#token').val();
         if (t){
-            xhr.setRequestHeader ('Dreamer', t);
+            xhr.setRequestHeader ('x-api-auth-dreamer', t);
         }
         
-        xhr.setRequestHeader ('Token', 'b778b0aad2ceda1b1577a77ba1f295e14fce706b33d17469cf477194f76a633a');
+        xhr.setRequestHeader ('x-api-auth-token', 'b778b0aad2ceda1b1577a77ba1f295e14fce706b33d17469cf477194f76a633a');
         return xhr;
     },
 

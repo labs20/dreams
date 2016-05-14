@@ -261,7 +261,7 @@ TShark.prototype.initObj = function(path, context){
     mod.params  = extend(true, context.request.query || {}, context.request.body || {});
 
     // Token dreamer
-    mod.params['_token'] = context.req.headers['dreamer'];
+    mod.params['_token'] = context.req.headers['x-api-auth-dreamer'];
 
     // Retorna
     return mod;
@@ -306,10 +306,10 @@ router.use(function *(next) {
     }
 
     // Token
-    if (this.req.headers['token']){
+    if (this.req.headers['x-api-auth-token']){
 
         // Token de acesso
-        ok = (this.req.headers['token'] == this.app.context.config.security.token);
+        ok = (this.req.headers['x-api-auth-token'] == this.app.context.config.security.token);
     }
 
     // Senão...
