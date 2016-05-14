@@ -103,7 +103,7 @@ function UserFollower(){
                     fields: [
                         'users_key', '_public', // '_to_come_true', '_comming_true', '_came_true',
                         // '_me_too'
-                        'username', 'firstname', 'img_profile'
+                        'username', 'firstname', 'lastname', 'img_profile'
                     ]
                 }
             },

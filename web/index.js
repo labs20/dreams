@@ -132,6 +132,15 @@ app = $.extend(app, {
                     {op: 'delete',  label: 'DELETE "\\id"'}
                 ]
             },
+            
+            {
+                id   : 'dreamfollowing',
+                label: 'DreamFollowing',
+                verbs: [
+                    {op: 'list',    label: 'GET  "\\"'}
+                ]
+            },
+
             {
                 id   : 'tocometrue',
                 label: 'To Come True',
@@ -187,9 +196,10 @@ app = $.extend(app, {
                 label: 'Album',
                 verbs: [
                     {op: 'list',    label: 'GET  "\\"'},
-                    {op: 'search',  label: 'GET  "\\?query=params"'},
                     {op: 'get',     label: 'GET  "\\id"'},
-                    {op: 'edit',    label: 'PUT  "\\id"'}
+                    {op: 'edit',    label: 'PUT  "\\id"'},
+                    {op: 'create',  label: 'POST "\\"'},
+                    {op: 'delete',  label: 'DELETE "\\id"'}
                 ]
             },
             {

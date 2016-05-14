@@ -357,7 +357,7 @@ router.get(/^\/api\/dreams\/.*$/, function *(next) {
     ;
 
     // Form de edição
-    if (len == 5) {
+    if (len == 5 && this.state.api.path[4] == 'edit') {
         this.state.api.call = 'edit';
         mod.params['key'] = this.state.api.path[3];
         this.body = yield mod.form(this);
@@ -381,9 +381,19 @@ router.get(/^\/api\/dreams\/.*$/, function *(next) {
             if (len == 4){
                 mod.params['key'] = this.state.api.path[3];
             }
+            if (!mod.params['provider']){
+                mod.params['provider'] = {}
+            }
+
+            if (!mod.params['provider']['id']){
+                mod.params['provider']['id'] = this.app.context.config.apiMap[this.state.api.path[2]].provider;
+            }
+
+            /*
             mod.params['provider'] = {
                 id: mod.params['provider'] ? mod.params['provider'] : this.app.context.config.apiMap[this.state.api.path[2]].provider
-            };
+            };*/
+
             this.body = yield mod.get(this);
         }
     }

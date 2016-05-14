@@ -40,6 +40,9 @@ function Users(){
                 _deactivation_date: {
                     tipo: types.comp.datetime, label: 'Data de Desativação:'
                 },
+                _suggested: {
+                    tipo: types.comp.check, label: 'Sugerido:'
+                },
                 _token: {
                     tipo: types.comp.text, label: 'Token:'
                 },
@@ -145,6 +148,7 @@ function Users(){
             },
             where: [ 
                 ['AND', 0, 'users_key', types.where.check],
+                ['AND', 0, '_suggested', types.where.check],
                 //['AND', 0, '_active', '=', 1],
                 //['AND', 0, '_banned', '<>', 1]
             ],
@@ -420,14 +424,8 @@ function Users(){
                  prov.where.push(['AND', 0, 'twitter_id', '=', "'" + this.params['twitter_id'] + "'"]);
 
              } else if (this.params['username']){
-                 var crypto = require('crypto')
-                     , hash = crypto.createHash('sha256')
-                 ;
-                 hash.update(this.params['password']);
-
                  prov.where.push(['AND', 0, 'username', '=', "'" + this.params['username'] + "'"]);
-                 prov.where.push(['AND', 0, 'password', '=', "'" + hash.digest('hex') + "'"]);
-
+                 prov.where.push(['AND', 0, 'password', '=', "'" + this.params['password'] + "'"]);
 
              } else {
                  prov.where.push(['AND', 0, "'1'", '=', "'2'"]);
@@ -448,6 +446,27 @@ function Users(){
 
         hash.update(this.params.row['username'] + this.params.row['password']);
         this.params.row['_token'] = hash.digest('hex');
+
+
+        // Image background
+        if (this.params.row['img_background']){
+
+            // Trata a img
+            // xyz
+
+            this.params.row['img_background'] = '';
+
+        }
+
+        // Image profile
+        if (this.params.row['img_profile']){
+
+            // Trata a img
+            // xyz
+
+            this.params.row['img_profile'] = '';
+
+        }
     };
 
     /**

@@ -49,13 +49,14 @@ module.exports = {
         'tocometrue'    : {mod: 'dreams/dreams',                provider: 'tocometrue'},
         'comingtrue'    : {mod: 'dreams/dreams',                provider: 'comingtrue'},
         'cametrue'      : {mod: 'dreams/dreams',                provider: 'cametrue'},
+        
+        'albuns'        : {mod: 'dreams/dream_albuns',          provider: 'default'},
+        'albumcomments' : {mod: 'comments/comments_albuns_rel', provider: 'default'},
+        'albumlikes'    : {mod: 'users/users_like_albuns_rel',  provider: 'default'},
 
         'dreamcomments' : {mod: 'comments/comments_dreams_rel', provider: 'default'},
         'dreamlikes'    : {mod: 'users/users_like_dreams_rel',  provider: 'default'},
 
-        'albuns'        : {mod: 'users/user_following',         provider: 'default'},
-        'albumcomments' : {mod: 'comments/comments_albuns_rel', provider: 'default'},
-        'albumlikes'    : {mod: 'users/users_like_albuns_rel',  provider: 'default'},
 
         'denuncy'       : {mod: 'denuncy/denuncy',              provider: 'default'},
         'dreamdenuncy'  : {mod: 'denuncy/denuncy_dreams_rel',   provider: 'default'},

@@ -182,8 +182,8 @@ function Dreams(){
             order: [
                 ['0', 'dreams_key', 'desc']
             ],
-            search: [ 
-                
+            search: [
+                {alias: 0, field: 'description',  param: types.search.like_full }
             ],
             limit: 250,
             showSQL: 0
@@ -205,6 +205,7 @@ function Dreams(){
                 ['0', 'dreams_key', 'asc']
             ],
             search: [
+                {alias: 0, field: 'description',  param: types.search.like_full }
 
             ],
             limit: 250,
@@ -234,6 +235,7 @@ function Dreams(){
                 ['0', 'dreams_key', 'asc']
             ],
             search: [
+                {alias: 0, field: 'description',  param: types.search.like_full }
 
             ],
             limit: 250,
@@ -264,6 +266,7 @@ function Dreams(){
                 ['0', 'dreams_key', 'asc']
             ],
             search: [
+                {alias: 0, field: 'description',  param: types.search.like_full }
 
             ],
             limit: 250,
@@ -294,6 +297,7 @@ function Dreams(){
                 ['0', 'dreams_key', 'asc']
             ],
             search: [
+                {alias: 0, field: 'description',  param: types.search.like_full }
 
             ],
             limit: 250,
@@ -324,6 +328,7 @@ function Dreams(){
                 ['0', 'dreams_key', 'asc']
             ],
             search: [
+                {alias: 0, field: 'description',  param: types.search.like_full }
 
             ],
             limit: 250,
@@ -381,8 +386,9 @@ function Dreams(){
     /**
      * Evento chamado ao final da operação GET :: LIST
      * @param ret Objeto de retorno
-     *
+     */
     this.onAfterList = function *(ret){
+
 
     };
 

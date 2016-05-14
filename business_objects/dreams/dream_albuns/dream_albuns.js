@@ -26,13 +26,13 @@ function DreamAlbuns(){
                     tipo: types.comp.dropdown, label: 'Dreams:',
                     data: { 
                         key: ['dreams_key'], 
-                        from: ['default', 'dreams', 'dreams'], 
-                        template: '{row.dreams_key} - {row.dream}', 
+                        from: ['dreams', 'dreams'],
+                        template: '{row.dreams_key} - {row.description}',
                         provider: '' 
                     } 
                 }, 
                 _active: {
-                    tipo: types.comp.text, label: ' Active:'
+                    tipo: types.comp.check, label: ' Active:'
                 }, 
                 img: {
                     tipo: types.comp.text, label: 'Img:'
@@ -58,8 +58,9 @@ function DreamAlbuns(){
                 size  : types.form.size.small
             },
             linhas: [
-                {titulo: "Informações de dream_albuns"},
-                {dream_albuns_key: 25, dreams_key: 25, _active: 25, img: 25}
+                {titulo: "Foto"},
+                {_active: 15, dreams_key: 85},
+                {img: 100}
             ],
             ctrls: {
                 
@@ -84,7 +85,7 @@ function DreamAlbuns(){
                     ]
                 },
                 1: { 
-                    from: ['default', 'dreams', 'dreams'],
+                    from: ['dreams', 'dreams'],
                         join: {source: 0, tipo: types.join.left, on: 'dreams_key', where: ''},
                     fields: [
                         
