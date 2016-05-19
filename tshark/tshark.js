@@ -438,6 +438,7 @@ router.post(/^\/api\/dreams\/.*/, function *(next) {
                     result: res
                 };
             } else {
+                res['success'] = 1;
                 this.body = res;
             }
         } catch (e){

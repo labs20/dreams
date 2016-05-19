@@ -473,8 +473,12 @@ function Users(){
      * Evento chamado ao final da operação POST :: Insert
      * @param ret Objeto de retorno
      */
-    this.onAfterInsert = function *(ret){
+    this.onAfterInsert = function *(ret, ctx){
         ret['token'] = this.params.row['_token'];
+        ret['success'] = this.params.row['_token'] ? 1 : 0;
+        this.params['users_key'] = this.params.row['users_key'] = ret['result'];
+        var data = yield this.select(ctx, 'default', false, ['users', 'users']);
+        ret['data'] = data;
     };
 
     /**
