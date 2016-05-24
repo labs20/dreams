@@ -735,6 +735,15 @@ MySql.prototype._processResults = function *(sqlParams, results, obj, sql, meta)
                 case 'datetime':
                     row[m.field] = row[m.field] != null ? moment(row[m.field]).format("YYYY-MM-DDTHH:mm:ss") : '';
                     break;
+
+                case 'int':
+                case 'float':
+                    row[m.field] = row[m.field] == null ? 0 : row[m.field];
+                    break;
+
+                default:
+                    row[m.field] = row[m.field] == null ? '' : row[m.field];
+
             }
         });
 

@@ -13,8 +13,7 @@ function TShark(app, no_cache){
     this.no_caching_require = true;
 
     // Parametros de conexão
-    var MySql = require('./mysql.js')
-    ;
+    var MySql = require('./mysql.js');
     this.db = false;
     try {
 
@@ -34,6 +33,13 @@ function TShark(app, no_cache){
     } catch (e){
         log.erro(e);
     }
+
+    // Conexão para push IOS
+    this.apnConn = new apn.Connection({
+        cert    : this.app.context.config.pushserver.ios.cert,
+        key     : this.app.context.config.pushserver.ios.key,
+        passphrase: this.app.context.config.pushserver.ios.pass
+    });
 }
 
 
@@ -49,6 +55,7 @@ const router    = require('koa-router')()
     , BizObject = require('tshark/biz_object.js')
     , cookies   = require('tshark/cookie.js')
     , log       = require('tshark/_log.js')
+    , apn       = require('apn')
 ;
 
 // endregion
@@ -120,7 +127,6 @@ TShark.prototype.assureDir = (path) => {
 };
 
 //endregion
-
 
 
 //region :: Render de templates
@@ -213,58 +219,62 @@ TShark.prototype.parseFields = function(templ, re){
  * @return { BizObject }
  */
 TShark.prototype.initObj = function(path, context){
-    var m = path.length > 3 ? path[2] : path[path.length-1]
-        , pack
-        , bobj
-    ;
-    if (this.app.context.config.apiMap[m]) {
-        var tmp = this.app.context.config.apiMap[m].mod.split('/');
-        pack = tmp[0];
-        bobj = tmp[1];
-    } else {
-        pack = path[0];
-        bobj = path[1];
+    try {
+        var m = path.length > 3 ? path[2] : path[path.length - 1]
+            , pack
+            , bobj
+            ;
+        if (this.app.context.config.apiMap[m]) {
+            var tmp = this.app.context.config.apiMap[m].mod.split('/');
+            pack = tmp[0];
+            bobj = tmp[1];
+        } else {
+            pack = path[0];
+            bobj = path[1];
+        }
+
+        // Business Object
+        var op = 'business_objects/'
+            + pack + '/'
+            + bobj + '/'
+            + bobj + '.js';
+        var obj = this.no_caching_require
+                ? reload(op)
+                : require(op)
+            ;
+
+        // Extende
+        if (!obj['extended']) {
+            util.inherits(obj, BizObject);
+        }
+
+        // Cria
+        var mod = new obj(path);
+
+        // Vinculo ao engine
+        mod.engine = this;
+
+        // Path
+        mod.path = {
+            pack: pack,
+            obj: bobj,
+            asArray: tmp,
+            asString: pack + '/' + bobj
+        };
+
+        // Params
+        mod.context = this.app.context;
+        mod.state = context.state;
+        mod.params = extend(true, context.request.query || {}, context.request.body || {});
+
+        // Token dreamer
+        mod.params['_token'] = context.req.headers['x-api-auth-dreamer'];
+
+        // Retorna
+        return mod;
+    } catch (e){
+        console.log(e.message);
     }
-
-    // Business Object
-    var op = 'business_objects/'
-        + pack + '/'
-        + bobj + '/'
-        + bobj + '.js';
-    var obj = this.no_caching_require
-            ? reload(op)
-            : require(op)
-        ;
-
-    // Extende
-    if (!obj['extended']) {
-        util.inherits(obj, BizObject);
-    }
-
-    // Cria
-    var mod = new obj(path);
-
-    // Vinculo ao engine
-    mod.engine = this;
-
-    // Path
-    mod.path = {
-        pack    : pack,
-        obj     : bobj,
-        asArray : tmp,
-        asString: pack + '/' + bobj
-    };
-
-    // Params
-    mod.context = this.app.context;
-    mod.state   = context.state;
-    mod.params  = extend(true, context.request.query || {}, context.request.body || {});
-
-    // Token dreamer
-    mod.params['_token'] = context.req.headers['x-api-auth-dreamer'];
-
-    // Retorna
-    return mod;
 };
 
 
@@ -356,45 +366,53 @@ router.get(/^\/api\/dreams\/.*$/, function *(next) {
         , len = this.state.api.path.length
     ;
 
-    // Form de edição
-    if (len == 5 && this.state.api.path[4] == 'edit') {
-        this.state.api.call = 'edit';
-        mod.params['key'] = this.state.api.path[3];
-        this.body = yield mod.form(this);
-
-    } else {
-
-        // Form de inserção
-        if (len == 4 && this.state.api.path[3] == 'new') {
-            this.state.api.call = 'create';
-            mod.params['key'] = 'NEW_KEY';
+    if (mod) {
+        // Form de edição
+        if (len == 5 && this.state.api.path[4] == 'edit') {
+            this.state.api.call = 'edit';
+            mod.params['key'] = this.state.api.path[3];
             this.body = yield mod.form(this);
 
-        // Listagem
         } else {
-            this.state.api.call = (this.request.query['query']
-                ? 'search'
-                : len == 4 && this.state.api.path[3]
-                    ? 'get'
-                    : 'list'
-            );
-            if (len == 4){
-                mod.params['key'] = this.state.api.path[3];
-            }
-            if (!mod.params['provider']){
-                mod.params['provider'] = {}
-            }
 
-            if (!mod.params['provider']['id']){
-                mod.params['provider']['id'] = this.app.context.config.apiMap[this.state.api.path[2]].provider;
+            // Form de inserção
+            if (len == 4 && this.state.api.path[3] == 'new') {
+                this.state.api.call = 'create';
+                mod.params['key'] = 'NEW_KEY';
+                this.body = yield mod.form(this);
+
+                // Listagem
+            } else {
+                this.state.api.call = (this.request.query['query']
+                        ? 'search'
+                        : len == 4 && this.state.api.path[3]
+                        ? 'get'
+                        : 'list'
+                );
+                if (len == 4) {
+                    mod.params['key'] = this.state.api.path[3];
+                }
+                if (!mod.params['provider']) {
+                    mod.params['provider'] = {}
+                }
+
+                if (!mod.params['provider']['id']) {
+                    mod.params['provider']['id'] = this.app.context.config.apiMap[this.state.api.path[2]].provider;
+                }
+
+                /*
+                 mod.params['provider'] = {
+                 id: mod.params['provider'] ? mod.params['provider'] : this.app.context.config.apiMap[this.state.api.path[2]].provider
+                 };*/
+
+                if (this.app.context.config.apiMap[this.state.api.path[2]]['exec']){
+                    var func = this.app.context.config.apiMap[this.state.api.path[2]]['exec'];
+                    this.body = yield mod[func](this);
+                    
+                } else {
+                    this.body = yield mod.get(this);
+                }
             }
-
-            /*
-            mod.params['provider'] = {
-                id: mod.params['provider'] ? mod.params['provider'] : this.app.context.config.apiMap[this.state.api.path[2]].provider
-            };*/
-
-            this.body = yield mod.get(this);
         }
     }
 
@@ -421,28 +439,30 @@ router.post(/^\/api\/dreams\/.*/, function *(next) {
         , len = this.state.api.path.length
     ;
 
-    // Execução de função
-    if (len = 4){
-        var func = this.state.api.call;
-        if (!func){
-            func = this.state.api.call = 'insert';
-        }
-
-        /**
-         * Executa a função no objeto
-         */
-        try {
-            var res = yield mod[func](this);
-            if (typeof res != 'object'){
-                this.body = {
-                    result: res
-                };
-            } else {
-                res['success'] = 1;
-                this.body = res;
+    if (mod) {
+        // Execução de função
+        if (len = 4) {
+            var func = this.state.api.call;
+            if (!func) {
+                func = this.state.api.call = 'insert';
             }
-        } catch (e){
-            console.log(e);
+
+            /**
+             * Executa a função no objeto
+             */
+            try {
+                var res = yield mod[func](this);
+                if (typeof res != 'object') {
+                    this.body = {
+                        result: res
+                    };
+                } else {
+                    res['success'] = 1;
+                    this.body = res;
+                }
+            } catch (e) {
+                console.log(e);
+            }
         }
     }
 
@@ -469,9 +489,11 @@ router.put(/^\/api\/dreams\/.*/, function *(next) {
         , len = this.state.api.path.length
     ;
 
-    // Execução de função
-    this.state.api.call = 'update';
-    this.body = yield mod.update(this);
+    if (mod) {
+        // Execução de função
+        this.state.api.call = 'update';
+        this.body = yield mod.update(this);
+    }
 
     /**
      * Finaliza
@@ -496,10 +518,12 @@ router.delete(/^\/api\/dreams\/.*/, function *(next) {
         , len = this.state.api.path.length
     ;
 
-    // Execução de função
-    this.state.api.call = 'delete';
-    mod.params['key'] = this.state.api.path[3];
-    this.body = yield mod.delete(this);
+    if (mod) {
+        // Execução de função
+        this.state.api.call = 'delete';
+        mod.params['key'] = this.state.api.path[3];
+        this.body = yield mod.delete(this);
+    }
 
     /**
      * Finaliza
@@ -572,6 +596,98 @@ router.use(function (err, req, res, next) {
 
 */
 //endregion
+
+
+//region :: Funções Globais
+
+/**
+ * Envio de push
+ * @param pack
+ * @param ctx
+ */
+TShark.prototype.sendPush = function *(ctx, pack){
+    try {
+        var devices = this.initObj(["users", "user_devices"], ctx);
+
+        // IOS
+        if (pack['ios']) {
+            var data = yield devices.select(ctx, 'default', {
+                where: [
+                    ["AND", 0, "users_key", "IN", "(" + pack['to_users'].join(',') + ")"],
+                    ["AND", 0, "ios", "=", "1"]
+                ]
+            });
+            
+            var note = new apn.Notification();
+            note.expiry = Math.floor(Date.now() / 1000) + 3600; // 1 hora
+            note.badge = pack['ios']['badge'] || 1;
+            note.sound = pack['ios']['sound'] || "ping.aiff";
+            note.alert = pack['ios']['alert'];
+            note.payload = {'messageFrom': 'Dreams'};
+
+            data.rows.forEach(row => {
+                var device = new apn.Device(row['token']);
+                console.log(note.alert);
+                this.apnConn.pushNotification(note, device);
+            })
+        }
+
+    } catch (e){
+        console.log(e.message);
+    }
+};
+
+/**
+ * Salva imagem em base64
+ * @param path
+ * @param data
+ * @returns {string|*}
+ */
+TShark.prototype.saveBase64Image = function(path, data) {
+    try {
+        var img = this.decodeBase64Image(data)
+            , ext = 'png'
+        ;
+
+        switch (img.type) {
+            case 'image/jpeg':
+                ext = 'jpg';
+                break;
+            
+            default:
+                ext = 'png';
+        }
+        path += '.' + ext;
+        fs.writeFile(path, img.data);
+        return path;
+
+    } catch (e){
+        
+    }
+};
+
+/**
+ * Recompoe uma imagem base64
+ * @param dataString
+ * @returns {*}
+ */
+TShark.prototype.decodeBase64Image = function(dataString) {
+    var matches = dataString.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/)
+        , response = {}   
+    ;
+
+    if (matches.length !== 3) {
+        return new Error('String base64 inválida');
+    }
+
+    response.type = matches[1];
+    response.data = new Buffer(matches[2], 'base64');
+
+    return response;
+};
+
+//endregion
+
 
 
 // Exporta

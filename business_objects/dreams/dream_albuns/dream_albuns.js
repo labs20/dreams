@@ -223,9 +223,9 @@ function DreamAlbuns(){
      * Evento chamado na operação POST :: Insert
      * @param ret Objeto de retorno
      * @param ctx Contexto de chamada
-     *
+     */
      this.onInsert = function *(ret, ctx){
-
+        this.saveImage();
     };
 
     /**
@@ -240,9 +240,9 @@ function DreamAlbuns(){
      * Evento chamado na operação PUT :: Update
      * @param ret Objeto de retorno
      * @param ctx Contexto de chamada
-     *
+     */
      this.onUpdate = function *(ret, ctx){
-
+        this.saveImage();
     };
 
     /**
@@ -277,6 +277,22 @@ function DreamAlbuns(){
 
 
     //region :: Regras de Negócio
+
+    /**
+     * Salva imagens dos sonhos recebidas em base64
+     */
+    this.saveImage = function(){
+
+        // Imagem de profile
+        if (this.params.row['img'] && this.params.row['dream_albuns_key']){
+            var img = this.engine.saveBase64Image(
+                "web/imgs/album/a_" + this.params.row['dream_albuns_key'],
+                this.params.row['img']
+            );
+            this.params.row['img'] = img;
+        }
+
+    };
 
     //endregion
     

@@ -130,6 +130,35 @@ function UsersDreamsRel(){
             showSQL: 0
         },
 
+        dreamer: {
+            sources: {
+                0: {
+                    from: ['users', 'users_dreams_rel'],
+                    fields: [
+                        '_accept'
+                    ]
+                },
+                1: {
+                    from: ['users', 'users'],
+                    join: {source: 0, tipo: types.join.inner, on: 'users_key', where: ''},
+                    fields: [
+                        '*'
+                    ]
+                }
+            },
+            where: [
+                ['AND', 0, 'dreams_key', types.where.check]
+            ],
+            order: [
+                ['0', 'dreams_key', 'desc']
+            ],
+            search: [
+
+            ],
+            limit: 250,
+            showSQL: 0
+        },
+
         update: {
             sources: {
                 0: {
@@ -250,6 +279,74 @@ function UsersDreamsRel(){
      * @param ctx Contexto de chamada
      */
      this.onInsert = function *(ret, ctx){
+         if (!this.params.row['users_key']) {
+             var data = yield this.select(ctx, 'profile', false, ['users', 'users']);
+             if (data.rows.length) {
+                 this.params.row['users_key'] = data.rows[0]['users_key'];
+             }
+             this.params['push'] = 'participou';
+         }
+    };
+
+    /**
+     * Evento chamado ao final da operação POST :: Insert
+     * @param ret Objeto de retorno
+     */
+    this.onAfterInsert = function *(ret, ctx){
+        var msg = '' 
+            , key = this.params.row['users_key'] 
+            , dream = yield this.select(ctx, 'default', false, ['dreams', 'dreams'])
+        ;
+        
+        if (this.params['push']) {
+            var profile = yield this.select(ctx, 'profile', false, ['users', 'users']);
+            msg = profile.rows[0]['firstname'] + (profile.rows[0]['lastname'] ? ' ' + profile.rows[0]['lastname'] : '');
+            msg += " participou do seu sonho";
+            
+            key  = dream.rows[0]['users_key'];
+            
+        } else {
+            var user = yield this.select(ctx, 'profile', false, ['users', 'users']);
+
+            // Mensagem
+            msg = user.rows[0]['firstname'] + (user.rows[0]['lastname'] ? ' ' + user.rows[0]['lastname'] : '');
+            switch (dream.rows[0]['_status']){
+                case 1:
+                    msg += " quer realizar";
+                    break;
+
+                case 2:
+                    msg += " está realizando";
+                    break;
+
+                case 3:
+                    msg += " realizou";
+                    break;
+            }
+            msg += " um sonho com você";
+        }
+        
+        // Push
+        yield this.engine.sendPush(ctx, {
+            to_users: [key],
+            expire: 1,
+            android: {
+                data: {
+                    message: msg
+                }
+            },
+            ios: {
+                alert: msg
+            }
+        });
+    };
+
+    /**
+     * Evento chamado na operação PUT :: Update
+     * @param ret Objeto de retorno
+     * @param ctx Contexto de chamada
+     */
+    this.onUpdate = function *(ret, ctx){
          var data = yield this.select(ctx, 'profile', false, ['users', 'users']);
          if (data.rows.length) {
              this.params.row['users_key'] = data.rows[0]['users_key'];
@@ -257,28 +354,33 @@ function UsersDreamsRel(){
     };
 
     /**
-     * Evento chamado ao final da operação POST :: Insert
-     * @param ret Objeto de retorno
-     *
-     this.onAfterInsert = function *(ret){
-
-    };
-
-    /**
-     * Evento chamado na operação PUT :: Update
-     * @param ret Objeto de retorno
-     * @param ctx Contexto de chamada
-     *
-     this.onUpdate = function *(ret, ctx){
-
-    };
-
-    /**
      * Evento chamado ao final da operação PUT :: Update
      * @param ret Objeto de retorno
-     *
-     this.onAfterUpdate = function *(ret){
+     */
+    this.onAfterUpdate = function *(ret, ctx){
+        if (this.params.row['_accept']){
+            var profile = yield this.select(ctx, 'profile', false, ['users', 'users'])
+                , dream = yield this.select(ctx, 'default', false, ['dreams', 'dreams'])
+            ;
 
+            // Mensagem
+            var msg = profile.rows[0]['firstname'] + (profile.rows[0]['lastname'] ? ' ' + profile.rows[0]['lastname'] : '');
+            msg += " aceitou ser adicionado em seu sonho";
+
+            // Push
+            yield this.engine.sendPush(ctx, {
+                to_users: [dream.rows[0]['users_key']],
+                expire: 1,
+                android: {
+                    data: {
+                        message: msg
+                    }
+                },
+                ios: {
+                    alert: msg
+                }
+            });
+        }
     };
 
     /**

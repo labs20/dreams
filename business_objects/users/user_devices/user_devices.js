@@ -31,6 +31,9 @@ function UserDevices(){
                         provider: '' 
                     } 
                 }, 
+                ios: {
+                    tipo: types.comp.check, label: 'IOS:'
+                },
                 token: {
                     tipo: types.comp.text, label: 'Token:'
                 }
@@ -56,7 +59,7 @@ function UserDevices(){
             },
             linhas: [
                 {titulo: "Informações de user_devices"},
-                {user_devices_key: 25, users_key: 25, token: 50}
+                {user_devices_key: 20, users_key: 20, ios: 20, token: 40}
             ],
             ctrls: {
                 
@@ -77,11 +80,11 @@ function UserDevices(){
                 0: {
                     from: ['users', 'user_devices'],
                     fields: [
-                        
+                        '*'
                     ]
                 },
                 1: { 
-                    from: ['default', 'users', 'users'],
+                    from: ['users', 'users'],
                         join: {source: 0, tipo: types.join.left, on: 'users_key', where: ''},
                     fields: [
                         

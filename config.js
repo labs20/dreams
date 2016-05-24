@@ -28,18 +28,38 @@ module.exports = {
             password: 'desenv123'
         }
     },
+    
+    // Server push
+    pushserver: {
+        url:  "localhost",
+        port: "8000",
+        ios: {
+            cert: "cert/dev/cert.pem",
+            key: "cert/dev/key.pem",
+            pass: "Dr3@m$#T3@m",
+        }
+    },
+
+    email: {
+        user:     "labs@softlabs.com.br",
+        password: "Milreae89",
+        host:     "mail.softlabs.com.br",
+        dreams:   "contato@dreamsteam.com.br",
+        ssl:      false
+    },
 
     // Mapa de APIs dinâmicas
     apiMap: {
 
         // Login
         'login'         : {mod: 'users/users',                  provider: 'login'},
-       // 'forgotpwd'     : {mod: 'users/users',                  exec: 'login'},
+        'forgotpwd'     : {mod: 'users/users',                  exec: 'forgotPwd'},
 
         // Usuários
         'users'         : {mod: 'users/users',                  provider: 'default'},
         'profile'       : {mod: 'users/users',                  provider: 'profile'},
         'follow'        : {mod: 'users/user_follow',            provider: 'default'},
+        'followall'     : {mod: 'users/user_follow',            provider: 'default'},
         'followers'     : {mod: 'users/user_followers',         provider: 'default'},
         
         // Sonhos

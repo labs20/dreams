@@ -274,7 +274,7 @@ function UserFollower(){
      * Evento chamado ao final da operação POST :: Insert
      * @param ret Objeto de retorno
      *
-     this.onAfterInsert = function *(ret){
+    this.onAfterInsert = function *(ret, ctx){
 
     };
 
@@ -288,11 +288,37 @@ function UserFollower(){
     };
 
     /**
-     * Evento chamado ao final da operação PUT :: Update
+     * Push de follower
      * @param ret Objeto de retorno
-     *
-     this.onAfterUpdate = function *(ret){
+     */
+    this.onAfterUpdate = function *(ret, ctx){
+        if (this.params.row['_accept']) {
+            var profile = yield this.select(ctx, 'profile', false, ['users', 'users'])
+                , follower = yield this.select(ctx, 'default', {
+                    where: [
+                        ['AND', 0, 'users_key', '=', this.params.row['follower_key']]
+                    ]
+                }, ['users', 'users'])
+                ;
 
+            var msg = profile.rows[0]['firstname'] + (profile.rows[0]['lastname'] ? ' ' + profile.rows[0]['lastname'] : '');
+            msg += profile.rows[0]['_public'] ? " começou a" : " quer";
+            msg += " te seguir";
+
+            // Push de comentar o sonho
+            yield this.engine.sendPush(ctx, {
+                to_users: [profile.rows[0]['users_key']],
+                expire: 1,
+                android: {
+                    data: {
+                        message: msg
+                    }
+                },
+                ios: {
+                    alert: msg
+                }
+            });
+        }
     };
 
     /**

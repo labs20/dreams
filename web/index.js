@@ -82,6 +82,13 @@ app = $.extend(app, {
                 ]
             },
             {
+                id   : 'forgotpwd',
+                label: 'ForgotPWD',
+                verbs: [
+                    {op: 'get',    label: 'GET  "\\"'}
+                ]
+            },
+            {
                 id   : 'profile',
                 label: 'Profile',
                 verbs: [
@@ -97,6 +104,13 @@ app = $.extend(app, {
                     {op: 'list',    label: 'GET  "\\"'},
                     {op: 'create',  label: 'POST "\\"'},
                     {op: 'delete',  label: 'DELETE "\\id"'}
+                ]
+            },
+            {
+                id   : 'followall',
+                label: 'FollowAll',
+                verbs: [
+                    {op: 'create',  label: 'POST "\\id"'},
                 ]
             },
             {
@@ -317,6 +331,28 @@ app = $.extend(app, {
     },
 
     /**
+     *
+     */
+    onBeforeInsert: function(el, settings){
+
+        var p = $('#params').val()
+            , tmp = p.split(',')
+            , q = {}
+        ;
+        tmp.forEach(t => {
+            var p2 = t.split('=');
+            if (p2.length) {
+                q[p2[0]] = p2[1];
+                settings.data.row[p2[0]] = p2[1];
+            }
+        });
+        tshark.send(q);
+
+        // Libera ou não para continuar
+        return true;
+    },
+
+    /**
      * Centraliza a exibição de mensagens de update e insert.
      */
     onAfterSave: function(mod, response, next){
@@ -357,6 +393,14 @@ app = $.extend(app, {
     },
 
     callAPI: function(){
+
+        tshark.call('users followall followall', {
+            _token: '49715b6dd4409f152476965da22b4102ed52819ccb638873113f56986a1d89b5'
+        });
+
+    },
+
+    callAPIs: function(){
         var path  = $('#url').val().split('/')
             , p   = $('#params').val()
             , v   = $('#verb').val()
@@ -371,6 +415,10 @@ app = $.extend(app, {
             case 'list':
             case 'delete':
                 api += ' ' + k;
+                break;
+
+            case 'forgotpwd':
+                api += ' ' +k;
                 break;
 
         }

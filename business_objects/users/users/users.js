@@ -117,10 +117,12 @@ function Users(){
                 {birthday: 25, facebook_id: 25, instagram_id: 25, twitter_id: 25},
                 {_creation_date: 40, _deactivation_date: 40},
                 {img_profile: 50, img_background: 50},
-                {_token: 100},
+                {device: 100},
             ],
             ctrls: {
-                
+                device: {
+                    tipo: types.comp.text, label: 'Device:'
+                }
             }
         }
 
@@ -447,26 +449,8 @@ function Users(){
         hash.update(this.params.row['username'] + this.params.row['password']);
         this.params.row['_token'] = hash.digest('hex');
 
-
-        // Image background
-        if (this.params.row['img_background']){
-
-            // Trata a img
-            // xyz
-
-            this.params.row['img_background'] = '';
-
-        }
-
-        // Image profile
-        if (this.params.row['img_profile']){
-
-            // Trata a img
-            // xyz
-
-            this.params.row['img_profile'] = '';
-
-        }
+        // Imagens
+        this.saveUserImages();
     };
 
     /**
@@ -477,6 +461,16 @@ function Users(){
         ret['token'] = this.params.row['_token'];
         ret['success'] = this.params.row['_token'] ? 1 : 0;
         this.params['users_key'] = this.params.row['users_key'] = ret['result'];
+
+        if (this.params.row['device']){
+            var dev = this.engine.initObj(["users", "user_devices"], ctx);
+            dev.params.row = {
+                users_key: this.params['users_key'],
+                token: this.params.row['device']
+            };
+            var ok = yield dev.insert();
+        }
+
         var data = yield this.select(ctx, 'default', false, ['users', 'users']);
         ret['data'] = data;
     };
@@ -485,16 +479,16 @@ function Users(){
      * Evento chamado na operação PUT :: Update
      * @param ret Objeto de retorno
      * @param ctx Contexto de chamada
-     *
-     this.onUpdate = function *(ret, ctx){
-
+     */
+    this.onUpdate = function *(ret, ctx){
+        this.saveUserImages();
     };
 
     /**
      * Evento chamado ao final da operação PUT :: Update
      * @param ret Objeto de retorno
      *
-     this.onAfterUpdate = function *(ret){
+    this.onAfterUpdate = function *(ret){
 
     };
 
@@ -522,6 +516,79 @@ function Users(){
 
 
     //region :: Regras de Negócio
+
+    /**
+     * Troca de senha de usuário
+     * @param ctx
+     * @returns {*}
+     */
+    this.forgotPwd = function *(ctx){
+        var length = 8,
+            charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
+            pwd = ""
+        ;
+        for (var i = 0, n = charset.length; i < length; ++i) {
+            pwd += charset.charAt(Math.floor(Math.random() * n));
+        }
+        
+        // Altera senha
+        this.params.row = {};
+        this.params.row['users_key'] = this.params['key'];
+        this.params.row['password'] = pwd;
+        yield this.update(ctx);
+
+        var ret = yield this.get(ctx);
+
+        // envia email
+        try {
+            var email = require("emailjs/email");
+            var server = email.server.connect(
+                this.engine.app.context.config.email
+            );
+
+            var user = ret.data.rows[0];
+            server.send({
+                text: "i hope this works",
+                from: "Dreams <" + this.engine.app.context.config.email.dreams + ">",
+                to:  user['firstname'] + (user['lastname'] ? user['lastname'] : '') 
+                    + " <" + user['email'] + ">",
+                subject: "Dreams - Nova senha"
+            }, function (err, message) {
+                console.log(err || message);
+            });
+
+        } catch (e){
+            console.log(e.message);
+        }
+
+        // Retorna user
+        return ret;
+    };
+
+    /**
+     * Salva imagens dos usuário recebidas em base64
+     */
+    this.saveUserImages = function(){
+
+        // Imagem de profile
+        if (this.params.row['img_profile'] && this.params.row['users_key']){
+            var img = this.engine.saveBase64Image(
+                "web/imgs/users/p_" + this.params.row['users_key'],
+                this.params.row['img_profile']
+            );
+            this.params.row['img_profile'] = img;
+        }
+
+        // Imagem de profile
+        if (this.params.row['img_background'] && this.params.row['users_key']){
+            var img = this.engine.saveBase64Image(
+                "web/imgs/users/b_" + this.params.row['users_key'],
+                this.params.row['img_background']
+            );
+            this.params.row['img_background'] = img;
+        }
+
+    };
 
     //endregion
     

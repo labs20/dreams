@@ -240,39 +240,64 @@ function UserFollowing(){
      * @param ctx Contexto de chamada
      */
     this.onInsert = function *(prov, ctx){
+        if (!this.params.row['follower_key']) {
 
-        // Pega o usuário pelo token
-        var data = yield this.select(ctx, 'profile', false, ['users', 'users'])
-            , follower_key
-            , _accept = 0
-        ;
+            // Pega o usuário pelo token
+            var data = yield this.select(ctx, 'profile', false, ['users', 'users'])
+                , follower_key
+                , _accept = 0
+                ;
 
-        if (data.rows.length) {
-            follower_key = data.rows[0]['users_key'];
+            if (data.rows.length) {
+                follower_key = data.rows[0]['users_key'];
+            }
+
+            // Verifica se o perfil do cara que irei seguir é público
+            data = yield this.select(ctx, 'default', {
+                where: [
+                    ['AND', 0, 'users_key', '=', this.params.row['users_key']]
+                ]
+            }, ['users', 'users']);
+
+            if (data.rows.length) {
+                _accept = data.rows[0]['_public'];
+            }
+
+            this.params.row['follower_key'] = follower_key;
+            this.params.row['_accept'] = _accept;
         }
-
-        // Verifica se o perfil do cara que irei seguir é público
-        data = yield this.select(ctx, 'default', {
-            where: [
-                ['AND', 0, 'users_key', '=', this.params.row['users_key']]
-            ]
-        }, ['users', 'users']);
-
-        if (data.rows.length) {
-            _accept = data.rows[0]['_public'];
-        }
-
-        this.params.row['follower_key'] = follower_key;
-        this.params.row['_accept'] = _accept;
-
     };
 
     /**
      * Evento chamado ao final da operação POST :: Insert
      * @param ret Objeto de retorno
-     *
-     this.onAfterInsert = function *(ret){
+     */
+    this.onAfterInsert = function *(ret, ctx){
+        var profile     = yield this.select(ctx, 'profile', false, ['users', 'users'])
+            , following = yield this.select(ctx, 'default', {
+                where: [
+                    ['AND', 0, 'users_key', '=', this.params.row['users_key']]
+                ]
+            }, ['users', 'users'])
+            ;
 
+        var msg = profile.rows[0]['firstname'] + (profile.rows[0]['lastname'] ? ' ' + profile.rows[0]['lastname'] : '');
+        msg += following.rows[0]['_public'] ? " começou a" : " quer";
+        msg += " te seguir";
+
+        // Push de comentar o sonho
+        yield this.engine.sendPush(ctx, {
+            to_users: [following.rows[0]['users_key']],
+            expire: 1,
+            android: {
+                data: {
+                    message: msg
+                }
+            },
+            ios: {
+                alert: msg
+            }
+        });
     };
 
     /**
@@ -317,6 +342,23 @@ function UserFollowing(){
 
 
     //region :: Regras de Negócio
+
+    this.followAll = function(ctx){
+
+        var sugeridos = yield this.select('sugeridos', false, ['users', 'users']);
+        sugeridos.rows.forEach(row => {
+            try {
+                this.params.row = {
+                    follower_key: row['users_key'],
+                    _accept: row['_public']
+                }
+                this.insert(ctx);
+            } catch(e){
+                
+            }
+        });
+
+    };
 
     //endregion
     

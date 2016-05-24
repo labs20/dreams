@@ -79,10 +79,10 @@ function Dreams(){
                 }, 
                 _exclusion_date: {
                     tipo: types.comp.datetime, label: ' Exclusion Date:'
-                }, 
+                },
                 _coming_true_date: {
                     tipo: types.comp.date, label: ' Coming True Date:'
-                }, 
+                },
                 _came_true_date: {
                     tipo: types.comp.date, label: ' Came True Date:'
                 },
@@ -462,6 +462,7 @@ function Dreams(){
         if (data.rows.length) {
             this.params.row['users_key'] = data.rows[0]['users_key'];
         }
+         this.saveDreamImage();
     };
 
     /**
@@ -476,17 +477,58 @@ function Dreams(){
      * Evento chamado na operação PUT :: Update
      * @param ret Objeto de retorno
      * @param ctx Contexto de chamada
-     *
+     */
      this.onUpdate = function *(ret, ctx){
-
+        this.saveDreamImage();
     };
 
     /**
      * Evento chamado ao final da operação PUT :: Update
      * @param ret Objeto de retorno
-     *
-     this.onAfterUpdate = function *(ret){
+     */
+     this.onAfterUpdate = function *(ret, ctx){
+         if (this.params.row['_status']) {
+             var profile = yield this.select(ctx, 'profile', false, ['users', 'users'])
+                 , dreamers = yield this.select(ctx, 'dreamer', false, ['users', 'users_dreams_rel'])
+             ;
 
+             // Mensagem
+             var msg = profile.rows[0]['firstname'] + (profile.rows[0]['lastname'] ? ' ' + profile.rows[0]['lastname'] : '');
+             switch (this.params.row['_status']){
+                 case "1":
+                     msg += " quer realizar";
+                     break;
+
+                 case "2":
+                     msg += " está realizando";
+                     break;
+
+                 case "3":
+                     msg += " realizou";
+                     break;
+             }
+             msg += " um sonho com você";
+
+             // Dreamers
+             var users = [];
+             dreamers.rows.forEach(row => {
+                 users.push(row['users_key']);
+             });
+
+             // Push
+             yield this.engine.sendPush(ctx, {
+                 to_users: [users],
+                 expire: 1,
+                 android: {
+                     data: {
+                         message: msg
+                     }
+                 },
+                 ios: {
+                     alert: msg
+                 }
+             });
+         }
     };
 
     /**
@@ -514,6 +556,22 @@ function Dreams(){
 
     //region :: Regras de Negócio
 
+    /**
+     * Salva imagens dos sonhos recebidas em base64
+     */
+    this.saveDreamImage = function(){
+
+        // Imagem de profile
+        if (this.params.row['img_cover'] && this.params.row['dreams_key']){
+            var img = this.engine.saveBase64Image(
+                "web/imgs/dreams/c_" + this.params.row['dreams_key'],
+                this.params.row['img_cover']
+            );
+            this.params.row['img_cover'] = img;
+        }
+
+    };
+    
     //endregion
     
 }

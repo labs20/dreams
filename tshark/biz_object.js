@@ -415,7 +415,11 @@ BizObject.prototype.change = function *(op, ctx){
         // Executa
         switch (op){
             case 'insert' : res.result = yield dts.insert(prov, this); break;
-            case 'update' : res.result = yield dts.update(prov, this); break;
+            case 'update' :
+                res.result = yield dts.update(prov, this);
+                res['result'] = 1;
+                res['success'] = 1;
+                break;
             case 'delete' : res.result = yield dts.delete(prov, this); break;
         }
 

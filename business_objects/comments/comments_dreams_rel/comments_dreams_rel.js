@@ -239,9 +239,29 @@ function CommentsDreamsRel(){
     /**
      * Evento chamado ao final da operação POST :: Insert
      * @param ret Objeto de retorno
-     *
-     this.onAfterInsert = function *(ret){
+     */
+    this.onAfterInsert = function *(ret, ctx){
+        var profile = yield this.select(ctx, 'profile', false, ['users', 'users'])
+            , dreamer = yield this.select(ctx, 'dreamer', false, ['users', 'users_dreams_rel'])
+        ;
 
+        // Mensagem
+        var msg = profile.rows[0]['firstname'] + (profile.rows[0]['lastname'] ? ' ' + profile.rows[0]['lastname'] : '');
+        msg += " comentou o seu sonho";
+        
+        // Push de comentar o sonho
+        yield this.engine.sendPush(ctx, {
+            to_users: [dreamer.rows[0]['users_key']],
+            expire: 1,
+            android: {
+                data: {
+                    message: msg
+                }
+            },
+            ios: {
+                alert: msg
+            }
+        });
     };
 
     /**
