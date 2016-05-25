@@ -274,7 +274,7 @@ function UserFollowing(){
      */
     this.onAfterInsert = function *(ret, ctx){
         var profile     = yield this.select(ctx, 'profile', false, ['users', 'users'])
-            , following = yield this.select(ctx, 'default', {
+            , following = yield this.select(ctx, 'users', {
                 where: [
                     ['AND', 0, 'users_key', '=', this.params.row['users_key']]
                 ]
@@ -282,7 +282,7 @@ function UserFollowing(){
             ;
 
         var msg = profile.rows[0]['firstname'] + (profile.rows[0]['lastname'] ? ' ' + profile.rows[0]['lastname'] : '');
-        msg += following.rows[0]['_public'] ? " começou a" : " quer";
+        msg += following.rows[0]['_public'] == 1 ? " começou a" : " quer";
         msg += " te seguir";
 
         // Push de comentar o sonho
@@ -343,21 +343,28 @@ function UserFollowing(){
 
     //region :: Regras de Negócio
 
-    this.followAll = function(ctx){
+    this.followall = function *(ctx){
+        this.params['_suggested'] = 1;
+        var profile = yield this.select(ctx, 'profile', false, ['users', 'users'])
+            , sugeridos = yield this.select(ctx, 'default', false, ['users', 'users'])
+        ;
 
-        var sugeridos = yield this.select('sugeridos', false, ['users', 'users']);
-        sugeridos.rows.forEach(row => {
+        for (var r = 0; r < sugeridos.rows.length; r++) {
             try {
                 this.params.row = {
-                    follower_key: row['users_key'],
-                    _accept: row['_public']
-                }
-                this.insert(ctx);
-            } catch(e){
-                
-            }
-        });
+                    users_key: sugeridos.rows[r]['users_key'],
+                    follower_key: profile.rows[0]['users_key'],
+                    _accept: sugeridos.rows[r]['_public']
+                };
+                yield this.insert(ctx);
+            } catch (e) {
 
+            }
+        }
+
+        return {
+            success: 1
+        }
     };
 
     //endregion

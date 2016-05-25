@@ -6,7 +6,9 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
+    "apn": "^1.7.5",
     "app-module-path": "^1.0.6",
+    "emailjs": "^1.0.4",
     "extend": "^3.0.0",
     "fs-extra": "^0.27.0",
     "jade": "^1.11.0",

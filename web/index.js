@@ -110,7 +110,7 @@ app = $.extend(app, {
                 id   : 'followall',
                 label: 'FollowAll',
                 verbs: [
-                    {op: 'create',  label: 'POST "\\id"'},
+                    {op: 'followall',  label: 'POST "\\"'},
                 ]
             },
             {
@@ -393,14 +393,6 @@ app = $.extend(app, {
     },
 
     callAPI: function(){
-
-        tshark.call('users followall followall', {
-            _token: '49715b6dd4409f152476965da22b4102ed52819ccb638873113f56986a1d89b5'
-        });
-
-    },
-
-    callAPIs: function(){
         var path  = $('#url').val().split('/')
             , p   = $('#params').val()
             , v   = $('#verb').val()
@@ -421,6 +413,9 @@ app = $.extend(app, {
                 api += ' ' +k;
                 break;
 
+            case 'followall':
+                tshark.call('dreams followall followall');
+                return;
         }
 
         var tmp = p.split(',')
