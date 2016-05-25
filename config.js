@@ -65,6 +65,8 @@ module.exports = {
         // Sonhos
         'dreams'        : {mod: 'dreams/dreams',                provider: 'default'},
         'mydreams'      : {mod: 'dreams/dreams',                provider: 'mydreams'},
+        'feedall'       : {mod: 'dreams/dreams',                provider: 'feedall'},
+        'feedfollowing' : {mod: 'dreams/dreams',                provider: 'feedfollowing'},
         'dreamtoo'      : {mod: 'users/users_dreams_rel',       provider: 'default'},
         'tocometrue'    : {mod: 'dreams/dreams',                provider: 'tocometrue'},
         'comingtrue'    : {mod: 'dreams/dreams',                provider: 'comingtrue'},

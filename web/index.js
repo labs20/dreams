@@ -136,6 +136,22 @@ app = $.extend(app, {
                     {op: 'delete',  label: 'DELETE "\\id"'}
                 ]
             },
+
+            {
+                id   : 'feedall',
+                label: 'FeedAll',
+                verbs: [
+                    {op: 'list',    label: 'GET  "\\"'}
+                ]
+            },
+            {
+                id   : 'feedfollowing',
+                label: 'FeedFollowing',
+                verbs: [
+                    {op: 'list',    label: 'GET  "\\"'}
+                ]
+            },
+            
             {
                 id   : 'dreamtoo',
                 label: 'DreamToo',

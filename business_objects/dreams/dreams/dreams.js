@@ -189,6 +189,92 @@ function Dreams(){
             showSQL: 0
         },
 
+        // Feed
+        feedall: {
+            sources: {
+                0: {
+                    from: ['dreams', 'dreams'],
+                    fields: this.def_fields
+                },
+                1: {
+                    from: ['users', 'users'],
+                        join: {source: 0, tipo: types.join.left, on: 'users_key', where: ''},
+                    fields: [
+
+                    ]
+                }
+            },
+            where: [
+                ['AND', 0, 'dreams_key', types.where.check],
+                ['AND', 0, '_active', '=', '1'],
+                ['AND', 0, '_banned', '=', '0'],
+                ['AND', 0, '_privacy', 'IN', "('P', 'C')"]
+            ],
+            order: [
+                ['0', 'dreams_key', 'desc']
+            ],
+            search: [
+                {alias: 0, field: 'description',  param: types.search.like_full }
+            ],
+            limit: 250,
+            showSQL: 0
+        },
+
+        feedfollowing: {
+            sources: {
+                0: {
+                    from: ['dreams', 'dreams'],
+                    fields: this.def_fields
+                },
+                1: {
+                    from: ['users', 'users'],
+                        join: {source: 0, tipo: types.join.inner, on: 'users_key', where: ''},
+                    fields: [
+
+                    ]
+                },
+                2: {
+                    from: ['users', 'user_followers'],
+                        join: {source: 1, tipo: types.join.inner, on: 'users_key', where: ''},
+                    fields: [
+
+                    ]
+                },
+                3: {
+                    from: ['users', 'users'],
+                    join: {source: 2, tipo: types.join.inner, on: ['users_key', 'follower_key'], where: ''},
+                    fields: [
+
+                    ]
+                }
+            },
+            where: [
+                ['AND', 0, 'dreams_key', types.where.check],
+                ['AND', 3, '_token', types.where.get],
+                ['AND', 2, '_accept', '=', '1'],
+                ['AND', 0, '_active', '=', '1'],
+                ['AND', 0, '_banned', '=', '0'],
+                "AND (tb0._privacy IN ('P', 'C', 'F')" +
+                " OR (tb0._privacy = 'S' " +
+                "     AND tb3.users_key IN (" +
+                "           SELECT users_key " +
+                "             FROM users_dreams_rel" +
+                "             WHERE dreams_key = tb0.dreams_key" +
+                "               AND _accept = 1" +
+                "         )" +
+                "     )" +
+                ")"
+            ],
+            order: [
+                ['0', 'dreams_key', 'desc']
+            ],
+            search: [
+                {alias: 0, field: 'description',  param: types.search.like_full }
+            ],
+            limit: 250,
+            showSQL: 0
+        },
+
         // Sonhos coletivos
         coletivos: {
             sources: {
