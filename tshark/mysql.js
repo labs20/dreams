@@ -311,6 +311,20 @@ MySql.prototype._parseFields = function(sqlParams, prov, ctx_fields, meta_fields
         }
     }
 
+    // Fields SQL
+    if (prov['sql_fields'] && util.isArray(prov['sql_fields'])){
+        prov['sql_fields'].forEach(function(f){
+
+            if (!sqlParams.fields['__as__']) {
+                sqlParams.fields['__as__'] = [];
+            }
+            sqlParams.fields['__as__'].push(f);
+            
+        }, this);
+
+        // Fields mapeados
+    }
+
     // Fields de função
     if (prov['fields'] && util.isArray(prov['fields'])) {
         prov['fields'].forEach(function (f) {

@@ -662,7 +662,7 @@ TShark.prototype.saveBase64Image = function(path, data) {
         return path;
 
     } catch (e){
-        
+        log.erro(e, 'Imagem: '+path);
     }
 };
 
@@ -676,12 +676,17 @@ TShark.prototype.decodeBase64Image = function(dataString) {
         , response = {}   
     ;
 
-    if (matches.length !== 3) {
-        return new Error('String base64 inválida');
-    }
+    if (matches) {
+        if (matches.length !== 3) {
+            return new Error('String base64 inválida');
+        }
 
-    response.type = matches[1];
-    response.data = new Buffer(matches[2], 'base64');
+        response.type = matches[1];
+        response.data = new Buffer(matches[2], 'base64');
+    } else {
+        response.type = 'image/png';
+        response.data = new Buffer(dataString, 'base64');
+    }
 
     return response;
 };

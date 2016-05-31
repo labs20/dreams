@@ -308,8 +308,10 @@ function Dreams(){
                 1: {
                     from: ['users', 'users'],
                     join: {source: 0, tipo: types.join.left, on: 'users_key', where: ''},
-                    fields: [
-
+                    sql_fields: [
+                        ' (SELECT COUNT(dreams_key) FROM dreams WHERE users_key = tb0.users_key AND _status = 1) as to_come_true',
+                        ' (SELECT COUNT(dreams_key) FROM dreams WHERE users_key = tb0.users_key AND _status = 2) as coming_true',
+                        ' (SELECT COUNT(dreams_key) FROM dreams WHERE users_key = tb0.users_key AND _status = 3) as came_true'
                     ]
                 }
             },
@@ -325,7 +327,7 @@ function Dreams(){
 
             ],
             limit: 250,
-            showSQL: 0
+            showSQL: 10
         },
 
         // Sonhos do token - Com data para realizar

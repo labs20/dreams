@@ -26,7 +26,15 @@ require('koa-qs')(app);
 /**
  * Parsing de body (POST DATA && QUERY STRING)
  */
-app.use(koaBody({formidable:{uploadDir: __dirname}}));
+app.use(
+    koaBody({
+        jsonLimit: '100mb',
+        formLimit: '100mb',
+        formidable:{
+            uploadDir: __dirname
+        }
+    })
+);
 
 /**
  * Configurações gerais da aplicação
