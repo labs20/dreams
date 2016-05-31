@@ -327,7 +327,7 @@ function Dreams(){
 
             ],
             limit: 250,
-            showSQL: 10
+            showSQL: 0
         },
 
         // Sonhos do token - Com data para realizar
