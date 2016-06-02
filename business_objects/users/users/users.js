@@ -85,10 +85,10 @@ function Users(){
                     tipo: types.comp.date, label: 'Nascimento:'
                 },
                 img_profile: {
-                    tipo: types.comp.text, label: 'Imagem Profile:'
+                    tipo: types.comp.text_huge, label: 'Imagem Profile:'
                 },
                 img_background: {
-                    tipo: types.comp.text, label: 'Imagem Background:'
+                    tipo: types.comp.text_huge, label: 'Imagem Background:'
                 }
             }
         }
