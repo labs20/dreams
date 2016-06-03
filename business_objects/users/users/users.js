@@ -173,7 +173,7 @@ function Users(){
             showSQL: 0
         },
 
-        login  : {
+        login    : {
             sources: {
                 0: {
                     from: ['users', 'users'],
@@ -202,7 +202,7 @@ function Users(){
             showSQL: 0
         },
 
-        users  : {
+        users    : {
             sources: {
                 0: {
                     from: ['users', 'users'],
@@ -320,10 +320,7 @@ function Users(){
             showSQL: 0
         },
 
-
-
-
-        update: {
+        update   : {
             sources: {
                 0: {
                     from: ['users', 'users'],
@@ -336,6 +333,95 @@ function Users(){
             showSQL: 0
         }
 
+    };
+
+    //endregion
+
+
+    //region :: Eventos Aplicados
+
+    this.onSelect = function *(prov, ctx){
+        if (prov['id'] == 'login') {
+
+            if (this.params['facebook_id']){
+                prov.where.push(['AND', 0, 'facebook_id', '=', "'" + this.params['facebook_id'] + "'"]);
+
+            } else if (this.params['instagram_id']){
+                prov.where.push(['AND', 0, 'instagram_id', '=', "'" + this.params['instagram_id'] + "'"]);
+
+            } else if (this.params['twitter_id']){
+                prov.where.push(['AND', 0, 'twitter_id', '=', "'" + this.params['twitter_id'] + "'"]);
+
+            } else if (this.params['email']){
+                prov.where.push(['AND', 0, 'email', '=', "'" + this.params['email'] + "'"]);
+                prov.where.push(['AND', 0, 'password', '=', "'" + this.params['password'] + "'"]);
+
+            } else if (this.params['username']){
+                prov.where.push(['AND', 0, 'username', '=', "'" + this.params['username'] + "'"]);
+                prov.where.push(['AND', 0, 'password', '=', "'" + this.params['password'] + "'"]);
+
+            } else {
+                prov.where.push(['AND', 0, "'1'", '=', "'2'"]);
+            }
+
+        }
+    };
+
+    /**
+     * Evento chamado na operação POST :: Insert
+     * @param ret Objeto de retorno
+     * @param ctx Contexto de chamada
+     */
+    this.onInsert = function *(ret, ctx){
+        var crypto = require('crypto')
+            , hash = crypto.createHash('sha256')
+            ;
+
+        // Imagens
+        this.params.img_background = this.params.row['img_background'];
+        this.params.img_profile = this.params.row['img_profile'];
+
+        this.params.row['img_background'] = this.params.row['img_profile'] = '';
+
+        hash.update(this.params.row['username'] + this.params.row['password']);
+        this.params.row['_token'] = hash.digest('hex');
+    };
+
+    /**
+     * Evento chamado ao final da operação POST :: Insert
+     * @param ret Objeto de retorno
+     */
+    this.onAfterInsert = function *(ret, ctx){
+        ret['token'] = this.params.row['_token'];
+        ret['success'] = this.params.row['_token'] ? 1 : 0;
+        this.params['users_key'] = this.params.row['users_key'] = ret['result'];
+
+        // Salva imagens
+        var ok = yield this.saveUserImages();
+        if (ok){
+            yield this.update(ctx);
+        }
+
+        if (this.params.row['device']){
+            var dev = this.engine.initObj(["users", "user_devices"], ctx);
+            dev.params.row = {
+                users_key: this.params['users_key'],
+                token: this.params.row['device']
+            };
+            var ok = yield dev.insert();
+        }
+
+        var data = yield this.select(ctx, 'default', false, ['users', 'users']);
+        ret['data'] = data;
+    };
+
+    /**
+     * Evento chamado na operação PUT :: Update
+     * @param ret Objeto de retorno
+     * @param ctx Contexto de chamada
+     */
+    this.onUpdate = function *(ret, ctx){
+        yield this.saveUserImages();
     };
 
     //endregion
@@ -437,88 +523,6 @@ function Users(){
 
     };*/
 
-     this.onSelect = function *(prov, ctx){
-         if (prov['id'] == 'login') {
-
-             if (this.params['facebook_id']){
-                 prov.where.push(['AND', 0, 'facebook_id', '=', "'" + this.params['facebook_id'] + "'"]);
-
-             } else if (this.params['instagram_id']){
-                 prov.where.push(['AND', 0, 'instagram_id', '=', "'" + this.params['instagram_id'] + "'"]);
-
-             } else if (this.params['twitter_id']){
-                 prov.where.push(['AND', 0, 'twitter_id', '=', "'" + this.params['twitter_id'] + "'"]);
-
-             } else if (this.params['username']){
-                 prov.where.push(['AND', 0, 'username', '=', "'" + this.params['username'] + "'"]);
-                 prov.where.push(['AND', 0, 'password', '=', "'" + this.params['password'] + "'"]);
-
-             } else {
-                 prov.where.push(['AND', 0, "'1'", '=', "'2'"]);
-             }
-
-         }
-     };
-     
-    /**
-     * Evento chamado na operação POST :: Insert
-     * @param ret Objeto de retorno
-     * @param ctx Contexto de chamada
-     */
-    this.onInsert = function *(ret, ctx){
-        var crypto = require('crypto')
-            , hash = crypto.createHash('sha256')
-        ;
-
-        // Imagens
-        this.params.img_background = this.params.row['img_background'];
-        this.params.img_profile = this.params.row['img_profile'];
-
-        this.params.row['img_background'] = this.params.row['img_profile'] = '';
-
-        hash.update(this.params.row['username'] + this.params.row['password']);
-        this.params.row['_token'] = hash.digest('hex');
-
-
-    };
-
-    /**
-     * Evento chamado ao final da operação POST :: Insert
-     * @param ret Objeto de retorno
-     */
-    this.onAfterInsert = function *(ret, ctx){
-        ret['token'] = this.params.row['_token'];
-        ret['success'] = this.params.row['_token'] ? 1 : 0;
-        this.params['users_key'] = this.params.row['users_key'] = ret['result'];
-
-        // Salva imagens
-        var ok = yield this.saveUserImages();
-        if (ok){
-            yield this.update(ctx);
-        }
-
-        if (this.params.row['device']){
-            var dev = this.engine.initObj(["users", "user_devices"], ctx);
-            dev.params.row = {
-                users_key: this.params['users_key'],
-                token: this.params.row['device']
-            };
-            var ok = yield dev.insert();
-        }
-
-        var data = yield this.select(ctx, 'default', false, ['users', 'users']);
-        ret['data'] = data;
-    };
-
-    /**
-     * Evento chamado na operação PUT :: Update
-     * @param ret Objeto de retorno
-     * @param ctx Contexto de chamada
-     */
-    this.onUpdate = function *(ret, ctx){
-        yield this.saveUserImages();
-    };
-
     /**
      * Evento chamado ao final da operação PUT :: Update
      * @param ret Objeto de retorno
@@ -585,7 +589,6 @@ function Users(){
                 , locale = user['_locale']
             ;
 
-
             var length = 8,
                 charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
                 pwd = ""
@@ -610,7 +613,7 @@ function Users(){
                 );
 
                 server.send({
-                    text: jade.render('views/emails/pwd/' + locale, {pwd: pwd}),
+                    text: jade.renderFile('views/emails/pwd/' + locale + '.jade', {pwd: pwd}),
                     from: "Dreams <" + this.engine.app.context.config.email.dreams + ">",
                     to: user['firstname'] + (user['lastname'] ? user['lastname'] : '')
                     + " <" + user['email'] + ">",
