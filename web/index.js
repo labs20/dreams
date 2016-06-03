@@ -85,7 +85,7 @@ app = $.extend(app, {
                 id   : 'forgotpwd',
                 label: 'ForgotPWD',
                 verbs: [
-                    {op: 'get',    label: 'GET  "\\"'}
+                    {op: 'forgotpwd',    label: 'POST  "\\"'}
                 ]
             },
             {
@@ -426,6 +426,17 @@ app = $.extend(app, {
             , data = {}
         ;
 
+        var tmp = p.split(',')
+            , q = {}
+            ;
+        tmp.forEach(t => {
+            var p2 = t.split('=');
+            if (p2.length) {
+                q[p2[0]] = p2[1];
+            }
+        });
+        tshark.send(q);
+
         switch (api){
             case 'get':
             case 'edit':
@@ -435,24 +446,13 @@ app = $.extend(app, {
                 break;
 
             case 'forgotpwd':
-                api += ' ' +k;
-                break;
+                tshark.call('dreams users forgotpwd');
+                return;
 
             case 'followall':
                 tshark.call('dreams followall followall');
                 return;
         }
-
-        var tmp = p.split(',')
-            , q = {}
-        ;
-        tmp.forEach(t => {
-            var p2 = t.split('=');
-            if (p2.length) {
-                q[p2[0]] = p2[1];
-            }
-        });
-        tshark.send(q);
 
         tshark.call(path.join(' ') + ' ' + api, data);
     }

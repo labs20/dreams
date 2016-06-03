@@ -46,6 +46,9 @@ function Users(){
                 _token: {
                     tipo: types.comp.text, label: 'Token:'
                 },
+                _locale: {
+                    tipo: types.comp.text, label: 'Locale:'
+                },
                 username: {
                     tipo: types.comp.text, label: 'Username:'
                 },
@@ -141,7 +144,7 @@ function Users(){
                     from: ['users', 'users'],
                     fields: [
                         'users_key', '_public', '_active', '_banned', '_pending_pwd',
-                        '_creation_date', '_deactivation_date', '_token', 'username', 'password',
+                        '_creation_date', '_deactivation_date', '_token', '_locale', 'username', 'password',
                         'email', 'facebook_id', 'instagram_id', 'twitter_id',
                         'firstname', 'lastname', 'gender', 'birthday',
                         'img_profile', 'img_background'
@@ -446,11 +449,12 @@ function Users(){
             , hash = crypto.createHash('sha256')
         ;
 
+        // Imagens
+        this.saveUserImages();
+
         hash.update(this.params.row['username'] + this.params.row['password']);
         this.params.row['_token'] = hash.digest('hex');
 
-        // Imagens
-        this.saveUserImages();
     };
 
     /**
@@ -522,40 +526,71 @@ function Users(){
      * @param ctx
      * @returns {*}
      */
-    this.forgotPwd = function *(ctx){
-        var length = 8,
-            charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
-            pwd = ""
-        ;
-        for (var i = 0, n = charset.length; i < length; ++i) {
-            pwd += charset.charAt(Math.floor(Math.random() * n));
-        }
-        
-        // Altera senha
-        this.params.row = {};
-        this.params.row['users_key'] = this.params['key'];
-        this.params.row['password'] = pwd;
-        yield this.update(ctx);
-
-        var ret = yield this.get(ctx);
-
-        // envia email
+    this.forgotpwd = function *(ctx){
         try {
-            var email = require("emailjs/email");
-            var server = email.server.connect(
-                this.engine.app.context.config.email
-            );
+            if (!this.params['email']) {
+                return {
+                    success: 0,
+                    msg: 'Não foi informado o email para recuperação da senha'
+                };
+            }
 
-            var user = ret.data.rows[0];
-            server.send({
-                text: "i hope this works",
-                from: "Dreams <" + this.engine.app.context.config.email.dreams + ">",
-                to:  user['firstname'] + (user['lastname'] ? user['lastname'] : '') 
+            // Acha usuário com base no email
+            var data = yield this.select(ctx, 'default', {
+                where: [
+                    ["AND", 0, "email", "=", "'" + this.params['email'] + "'"]
+                ]
+            }, ['users', 'users']);
+
+            if (!data['rows'] || !data.rows.length){
+                return {
+                    success: 0,
+                    msg: 'Email não encontrado'
+                };
+            }
+            var
+                user = data.rows[0]
+                , user_key = user['user_key']
+                , locale = user['_locale']
+            ;
+
+
+            var length = 8,
+                charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
+                pwd = ""
+                ;
+            for (var i = 0, n = charset.length; i < length; ++i) {
+                pwd += charset.charAt(Math.floor(Math.random() * n));
+            }
+
+            // Altera senha
+            this.params.row = {};
+            this.params.row['users_key'] = user_key;
+            this.params.row['password'] = pwd;
+            yield this.update(ctx);
+
+            // envia email
+            try {
+                var email = require("emailjs/email")
+                    , jade = require("jade")
+                ;
+                var server = email.server.connect(
+                    this.engine.app.context.config.email
+                );
+
+                server.send({
+                    text: jade.render('views/emails/pwd/' + locale, {pwd: pwd}),
+                    from: "Dreams <" + this.engine.app.context.config.email.dreams + ">",
+                    to: user['firstname'] + (user['lastname'] ? user['lastname'] : '')
                     + " <" + user['email'] + ">",
-                subject: "Dreams - Nova senha"
-            }, function (err, message) {
-                console.log(err || message);
-            });
+                    subject: "Dreams - Recuperação de senhas"
+                }, function (err, message) {
+                    console.log(err || message);
+                });
+
+            } catch (e) {
+                console.log(e.message);
+            }
 
         } catch (e){
             console.log(e.message);
