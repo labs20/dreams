@@ -92,6 +92,9 @@ function Users(){
                 },
                 img_background: {
                     tipo: types.comp.text_huge, label: 'Imagem Background:'
+                },
+                img_background_dreams_gallery: {
+                    tipo: types.comp.text_huge, label: 'Imagem Galeria:'
                 }
             }
         }
@@ -147,7 +150,7 @@ function Users(){
                         '_creation_date', '_deactivation_date', '_token', '_locale', 'username', 'password',
                         'email', 'facebook_id', 'instagram_id', 'twitter_id',
                         'firstname', 'lastname', 'gender', 'birthday',
-                        'img_profile', 'img_background'
+                        'img_profile', 'img_background', 'img_background_dreams_gallery'
                     ]
                 }
             },
