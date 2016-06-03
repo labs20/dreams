@@ -178,7 +178,7 @@ function Users(){
                         'users_key', '_public', '_pending_pwd', '_token',
                         'username', 'password', 'email', 'facebook_id', 'instagram_id', 'twitter_id',
                         'firstname', 'lastname', 'gender', 'birthday',
-                        'img_profile', 'img_background'
+                        'img_profile', 'img_background', 'img_background_dreams_gallery'
                     ]
                 }
             },
@@ -205,7 +205,7 @@ function Users(){
                         '_creation_date', '_deactivation_date', 'username', 'password',
                         'email', 'facebook_id', 'instagram_id', 'twitter_id',
                         'firstname', 'lastname', 'gender', 'birthday',
-                        'img_profile', 'img_background'
+                        'img_profile', 'img_background', 'img_background_dreams_gallery'
                     ]
                 }
             },
@@ -233,7 +233,7 @@ function Users(){
                         '_creation_date', '_deactivation_date', 'username', 'password',
                         'email', 'facebook_id', 'instagram_id', 'twitter_id',
                         'firstname', 'lastname', 'gender', 'birthday',
-                        'img_profile', 'img_background'
+                        'img_profile', 'img_background', 'img_background_dreams_gallery'
                     ]
                 }
             },
