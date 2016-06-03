@@ -471,10 +471,15 @@ function Users(){
         ;
 
         // Imagens
-        yield this.saveUserImages();
+        var img_background = this.params.row['img_background']
+            , img_profile = this.params.row['img_profile']
+        ;
+        this.params.row['img_background'] = this.params.row['img_profile'] = '';
 
         hash.update(this.params.row['username'] + this.params.row['password']);
         this.params.row['_token'] = hash.digest('hex');
+
+        yield this.saveUserImages();
 
     };
 
