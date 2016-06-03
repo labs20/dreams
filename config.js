@@ -41,11 +41,12 @@ module.exports = {
     },
 
     email: {
-        user:     "labs@softlabs.com.br",
-        password: "Milreae89",
-        host:     "mail.softlabs.com.br",
-        dreams:   "contato@dreamsteam.com.br",
-        ssl:      false
+        user     : "",
+        password : "",
+        host     : "smtp.????.com.br",
+        port     : "587",
+        dreams   : "contato@dreamsteam.com.br",
+        ssl      : false
     },
 
     // Mapa de APIs dinâmicas

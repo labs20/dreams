@@ -562,6 +562,10 @@ function Users(){
      * @returns {*}
      */
     this.forgotpwd = function *(ctx){
+        var ret = {
+            success: 1,
+            msg: "Email enviado para fila de envio com sucesso."
+        };
         try {
             if (!this.params['email']) {
                 return {
@@ -617,7 +621,12 @@ function Users(){
                     from: "Dreams <" + this.engine.app.context.config.email.dreams + ">",
                     to: user['firstname'] + (user['lastname'] ? user['lastname'] : '')
                     + " <" + user['email'] + ">",
-                    subject: "Dreams - Recuperação de senhas"
+                    subject: "Dreams - Recuperação de senhas",
+                    attachment:
+                    [
+                        {data:jade.renderFile('views/emails/pwd/' + locale + '.jade', {pwd: pwd}), alternative:true},
+                       // {path:"path/to/file.zip", type:"application/zip", name:"renamed.zip"}
+                    ]
                 }, function (err, message) {
                     console.log(err || message);
                 });
