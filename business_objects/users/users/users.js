@@ -471,15 +471,14 @@ function Users(){
         ;
 
         // Imagens
-        var img_background = this.params.row['img_background']
-            , img_profile = this.params.row['img_profile']
-        ;
+        this.params.img_background = this.params.row['img_background'];
+        this.params.img_profile = this.params.row['img_profile'];
+
         this.params.row['img_background'] = this.params.row['img_profile'] = '';
 
         hash.update(this.params.row['username'] + this.params.row['password']);
         this.params.row['_token'] = hash.digest('hex');
 
-        yield this.saveUserImages();
 
     };
 
@@ -491,6 +490,12 @@ function Users(){
         ret['token'] = this.params.row['_token'];
         ret['success'] = this.params.row['_token'] ? 1 : 0;
         this.params['users_key'] = this.params.row['users_key'] = ret['result'];
+
+        // Salva imagens
+        var ok = yield this.saveUserImages();
+        if (ok){
+            yield this.update(ctx);
+        }
 
         if (this.params.row['device']){
             var dev = this.engine.initObj(["users", "user_devices"], ctx);
@@ -630,25 +635,32 @@ function Users(){
      * Salva imagens dos usuário recebidas em base64
      */
     this.saveUserImages = function *(){
+        var ok = false
+            , img_profile    = this.params['img_profile']    || this.params.row['img_profile']
+            , img_background = this.params['img_background'] || this.params.row['img_background']
+        ;
 
         // Imagem de profile
-        if (this.params.row['img_profile'] && this.params.row['users_key']){
+        if (img_profile && (img_profile.length > 1000) && this.params.row['users_key']){
             var img = this.engine.saveBase64Image(
                 "web/imgs/users/p_" + this.params.row['users_key'],
-                this.params.row['img_profile']
+                img_profile
             );
             this.params.row['img_profile'] = img;
+            ok = true;
         }
 
         // Imagem de profile
-        if (this.params.row['img_background'] && this.params.row['users_key']){
+        if (img_background && (img_background.length > 1000) && this.params.row['users_key']){
             var img = this.engine.saveBase64Image(
                 "web/imgs/users/b_" + this.params.row['users_key'],
-                this.params.row['img_background']
+                img_background
             );
             this.params.row['img_background'] = img;
+            ok = true;
         }
 
+        return ok;
     };
 
     //endregion
