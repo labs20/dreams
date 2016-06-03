@@ -163,7 +163,10 @@ function Users(){
             order: [
                 ['0', 'users_key', 'desc']
             ],
-            search: [ 
+            search: [
+                {alias: 0, field: 'username',  param: types.search.like_full },
+                {alias: 0, field: 'firstname',  param: types.search.like_full },
+                {alias: 0, field: 'lastname',  param: types.search.like_full }
                 
             ],
             limit: 250,
@@ -190,6 +193,9 @@ function Users(){
                 ['0', 'users_key', 'desc']
             ],
             search: [
+                {alias: 0, field: 'username',  param: types.search.like_full },
+                {alias: 0, field: 'firstname',  param: types.search.like_full },
+                {alias: 0, field: 'lastname',  param: types.search.like_full }
 
             ],
             limit: 250,
@@ -218,6 +224,9 @@ function Users(){
                 ['0', 'users_key', 'desc']
             ],
             search: [
+                {alias: 0, field: 'username',  param: types.search.like_full },
+                {alias: 0, field: 'firstname',  param: types.search.like_full },
+                {alias: 0, field: 'lastname',  param: types.search.like_full }
 
             ],
             limit: 250,
@@ -244,6 +253,9 @@ function Users(){
                 ['0', 'users_key', 'desc']
             ],
             search: [
+                {alias: 0, field: 'username',  param: types.search.like_full },
+                {alias: 0, field: 'firstname',  param: types.search.like_full },
+                {alias: 0, field: 'lastname',  param: types.search.like_full }
 
             ],
             limit: 250,
@@ -270,6 +282,9 @@ function Users(){
                 ['0', 'users_key', 'desc']
             ],
             search: [
+                {alias: 0, field: 'username',  param: types.search.like_full },
+                {alias: 0, field: 'firstname',  param: types.search.like_full },
+                {alias: 0, field: 'lastname',  param: types.search.like_full }
 
             ],
             limit: 250,
@@ -296,6 +311,9 @@ function Users(){
                 ['0', 'users_key', 'desc']
             ],
             search: [
+                {alias: 0, field: 'username',  param: types.search.like_full },
+                {alias: 0, field: 'firstname',  param: types.search.like_full },
+                {alias: 0, field: 'lastname',  param: types.search.like_full }
 
             ],
             limit: 250,
