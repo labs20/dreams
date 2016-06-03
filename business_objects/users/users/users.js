@@ -450,7 +450,7 @@ function Users(){
         ;
 
         // Imagens
-        this.saveUserImages();
+        yield this.saveUserImages();
 
         hash.update(this.params.row['username'] + this.params.row['password']);
         this.params.row['_token'] = hash.digest('hex');
@@ -485,7 +485,7 @@ function Users(){
      * @param ctx Contexto de chamada
      */
     this.onUpdate = function *(ret, ctx){
-        this.saveUserImages();
+        yield this.saveUserImages();
     };
 
     /**
@@ -603,7 +603,7 @@ function Users(){
     /**
      * Salva imagens dos usuário recebidas em base64
      */
-    this.saveUserImages = function(){
+    this.saveUserImages = function *(){
 
         // Imagem de profile
         if (this.params.row['img_profile'] && this.params.row['users_key']){
