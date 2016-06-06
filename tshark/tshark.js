@@ -444,7 +444,12 @@ router.post(/^\/api\/dreams\/.*/, function *(next) {
         if (len = 4) {
             var func = this.state.api.call;
             if (!func) {
-                func = this.state.api.call = 'insert';
+
+                if (this.state.api.path[2] != mod.path.asArray[1]){
+                    func = this.state.api.path[2];
+                } else {
+                    func = this.state.api.call = 'insert';
+                }
             }
 
             /**
@@ -457,7 +462,9 @@ router.post(/^\/api\/dreams\/.*/, function *(next) {
                         result: res
                     };
                 } else {
-                    res['success'] = 1;
+                    if (!res.hasOwnProperty('success')) {
+                        res['success'] = 1;
+                    }
                     this.body = res;
                 }
             } catch (e) {

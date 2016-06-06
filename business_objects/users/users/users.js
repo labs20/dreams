@@ -361,7 +361,7 @@ function Users(){
                 prov.where.push(['AND', 0, 'password', '=', "'" + this.params['password'] + "'"]);
 
             } else {
-                prov.where.push(['AND', 0, "'1'", '=', "'2'"]);
+                prov.where.push(" AND 1 = 2");
             }
 
         }
